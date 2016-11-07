@@ -72,7 +72,36 @@ public class Course {
         this.description = description;
         this.stepsList = stepsList;
         this.ingredientList = ingredientList;
+    }
 
+    public boolean isFinished() {
+        for (Steps step : this.getStepsList()) {
+            if (!step.isFinished()) {
+                return false;
+            }
+        }
+        return true;
+    }
 
+    public int getCourseProgress() {
+        int progress = 0;
+        Steps currentStep = this.getCurrentStep();
+        for (Steps step : this.getStepsList()) {
+            if (step.getStepNum() <= currentStep.getStepNum()) {
+                progress += step.getProgress();
+            } else {
+                break;
+            }
+        }
+        return progress;
+    }
+
+    public Steps getCurrentStep() {
+        for (Steps step : this.getStepsList()) {
+            if (!step.isFinished()) {
+                return step;
+            }
+        }
+        return null;
     }
 }

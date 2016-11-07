@@ -21,6 +21,10 @@ public class Steps {
     public volatile int mProgress;
     public volatile State state  = State.NOT_STARTED;
     public volatile ProgressBar progressBar;
+    private boolean inProgress;
+    private boolean finished;
+    private long startTime = -1;
+
 
     public ProgressBar getProgressBar() {
         return progressBar;
@@ -70,13 +74,29 @@ public class Steps {
         this.timeImSeconds = timeImSeconds;
     }
 
-    public int getmProgress() {
-        return mProgress;
+    public void startProgress() {
+        this.inProgress = true;
+        this.startTime = System.currentTimeMillis();
     }
 
-    public void setmProgress(int mProgress) {
-        this.mProgress = mProgress;
+    public boolean isInProgress() {
+        return this.inProgress;
     }
 
+    public boolean isFinished() {
+        if (!this.finished && this.inProgress) {
+            this.finished = (System.currentTimeMillis() - (this.startTime + ((long) this.timeImSeconds * 1000))) > 0;
+            return this.finished;
+        }
+        this.inProgress = false;
+        return this.finished;
+    }
 
+    public int getProgress() {
+        if (this.isFinished())
+            return this.getTimeImSeconds();
+
+        // TODO - Finish this function. returns the seconds passed in this setp
+        return 0;
+    }
 }

@@ -25,9 +25,4 @@
         android:indeterminate="false"
         android:max="100"/>
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/main_progress_bar_image"
-        />
 </LinearLayout>

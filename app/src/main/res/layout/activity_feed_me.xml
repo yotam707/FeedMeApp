@@ -30,12 +30,12 @@
 
     </LinearLayout>
 
-    <ExpandableListView
+    <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/feed_me_courses_list"
         android:layout_weight="0.5">
 
-    </ExpandableListView>
+    </ListView>
 
 </LinearLayout>

@@ -24,9 +24,12 @@
             </intent-filter>
         </activity>
         <activity android:name=".CoursesActivity" />
-        <activity android:name=".EditCourseActiviry" />
         <activity android:name=".EditCoursesActivity" />
-        <activity android:name=".FeedMeActivity"></activity>
+        <activity android:name=".FeedMeActivity" />
+
+        <service
+            android:name=".CoursesProgressService"
+            android:exported="false"></service>
     </application>
 
 </manifest>
