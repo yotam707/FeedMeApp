@@ -128,20 +128,20 @@ public class DataManager {
     private void createCollection() {
         coursesCollection = new HashMap<>();
 
-        Course[] firstsCourse = {new Course(1,R.drawable.rice, "Salad",categoriesList.get(1), "Description 1", stepsList, ingredientList),
-                new Course(2,R.drawable.rice, "EggPlant",categoriesList.get(1), "Description 2", stepsList, ingredientList),
-                new Course(3,R.drawable.rice, "Hash Brown",categoriesList.get(1), "Description 3", stepsList, ingredientList)};
+        Course[] firstsCourse = {new Course(1,R.drawable.salad, "Salad",categoriesList.get(1), "Description 1", stepsList, ingredientList),
+                new Course(2,R.drawable.eggplant, "EggPlant",categoriesList.get(1), "Description 2", stepsList, ingredientList),
+                new Course(3,R.drawable.hasbrownies, "Hash Brown",categoriesList.get(1), "Description 3", stepsList, ingredientList)};
 
 
 
-        Course[] mainCourses = { new Course(4,R.drawable.rice, "Tomato Pasta",categoriesList.get(2), "Description 4", stepsList, ingredientList),
-                new Course(5,R.drawable.rice, "Omelet",categoriesList.get(2), "Description 5", stepsList, ingredientList),
-                new Course(6,R.drawable.rice, "Fish",categoriesList.get(2), "Description 6", stepsList, ingredientList)};
+        Course[] mainCourses = { new Course(4,R.drawable.tomatopasta, "Tomato Pasta",categoriesList.get(2), "Description 4", stepsList, ingredientList),
+                new Course(5,R.drawable.omlette, "Omelet",categoriesList.get(2), "Description 5", stepsList, ingredientList),
+                new Course(6,R.drawable.fish, "Fish",categoriesList.get(2), "Description 6", stepsList, ingredientList)};
 
 
 
-        Course[] desertCourses = {  new Course(7,R.drawable.rice, "Chocolate Cake",categoriesList.get(3), "Description 7", stepsList, ingredientList),
-                new Course(8,R.drawable.rice, "Banana Roti",categoriesList.get(3), "Description 8", stepsList, ingredientList)};
+        Course[] desertCourses = {  new Course(7,R.drawable.chocolatecake, "Chocolate Cake",categoriesList.get(3), "Description 7", stepsList, ingredientList),
+                new Course(8,R.drawable.bananaroti, "Banana Roti",categoriesList.get(3), "Description 8", stepsList, ingredientList)};
 
 
 

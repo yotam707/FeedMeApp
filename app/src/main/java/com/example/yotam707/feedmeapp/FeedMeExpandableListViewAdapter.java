@@ -104,7 +104,6 @@ public class FeedMeExpandableListViewAdapter extends BaseExpandableListAdapter {
         public GroupViewHolder(View v) {
             image = (ImageView) v.findViewById(R.id.feed_me_courses_image);
             name = (TextView) v.findViewById(R.id.feed_me_courses);
-            compleate = (ImageView) v.findViewById(R.id.main_progress_bar_image);
             progressBar = (ProgressBar)v.findViewById(R.id.main_progress_bar);
         }
     }
