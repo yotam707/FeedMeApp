@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.content.Context;
 import android.support.v4.content.LocalBroadcastManager;
 
+import com.example.yotam707.feedmeapp.data.DataManager;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,10 +30,17 @@ public class CoursesProgressService extends IntentService {
     public static final String INTENT_COURSE_ID = "com.example.yotam707.feedmeapp.extra.INTENT_COURSE_ID";
 
     LocalBroadcastManager broadcaster;
+    private ArrayList<Course> courses;
 
     public CoursesProgressService() {
         super("CoursesProgressService");
         broadcaster = LocalBroadcastManager.getInstance(this);
+    }
+
+    @Override
+    public void onStart(Intent intent, int startId) {
+        super.onStart(intent, startId);
+        courses = new ArrayList<>(DataManager.getInstance().getAddedCourses());
     }
 
     /**
@@ -41,10 +50,10 @@ public class CoursesProgressService extends IntentService {
      * @see IntentService
      */
     // TODO: Customize helper method
-    public static void startActionCoursesProgress(Context context, ArrayList<Course> courses) {
+    public static void startActionCoursesProgress(Context context) {
         Intent intent = new Intent(context, CoursesProgressService.class);
         intent.setAction(ACTION_START_COURSES_PROGRESS);
-        intent.putExtra(EXTRA_COURSES_LIST, courses);
+        //intent.putExtra(EXTRA_COURSES_LIST, coursesIndexes);
         context.startService(intent);
     }
 
@@ -53,8 +62,8 @@ public class CoursesProgressService extends IntentService {
         if (intent != null) {
             final String action = intent.getAction();
             if (ACTION_START_COURSES_PROGRESS.equals(action)) {
-                final ArrayList<Course> courses = (ArrayList) intent.getSerializableExtra(EXTRA_COURSES_LIST);
-                handleActionCoursesProgress(courses);
+                //final ArrayList<Integer> coursesIndexes = (ArrayList) intent.getSerializableExtra(EXTRA_COURSES_LIST);
+                handleActionCoursesProgress();
             }
         }
     }
@@ -63,29 +72,33 @@ public class CoursesProgressService extends IntentService {
      * Handle action Foo in the provided background thread with the provided
      * parameters.
      */
-    private void handleActionCoursesProgress(ArrayList<Course> courses) {
+    private void handleActionCoursesProgress() {
         boolean allFinished = true;
         for (Course course : courses) {
             if (!course.isFinished()) {
                 allFinished= false;
                 Steps currentStep = course.getCurrentStep();
-                if (!currentStep.isInProgress()) {
-                    currentStep.startProgress();
+                if(currentStep != null) {
+                    if (!currentStep.isInProgress()) {
+                        currentStep.startProgress();
+                    }
+                    long courseProg = course.getCourseProgress();
+                    this.sendCourseProgress(course.getId(), courseProg);
+                    break;
                 }
-                this.sendCourseProgress(course.getId(), course.getCourseProgress());
-                break;
             }
         }
 
         if (!allFinished) {
             try {
                 Thread.sleep(1000);
-            } catch (InterruptedException e) { }
-            CoursesProgressService.startActionCoursesProgress(this.getApplicationContext(), courses);
+            }
+            catch (InterruptedException e) { }
+            CoursesProgressService.startActionCoursesProgress(this.getApplicationContext());
         }
     }
 
-    private void sendCourseProgress(int courseId, int progress) {
+    private void sendCourseProgress(int courseId, long progress) {
         Intent intent = new Intent(INTENT_COURSE_PROGRESS);
         intent.putExtra(INTENT_COURSE_ID, courseId);
         intent.putExtra(INTENT_COURSE_PROGRESS_VALUE, progress);

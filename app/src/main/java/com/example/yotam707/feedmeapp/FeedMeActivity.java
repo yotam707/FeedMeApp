@@ -1,32 +1,23 @@
 package com.example.yotam707.feedmeapp;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.support.annotation.NonNull;
+import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
+import android.util.Log;
 import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.example.yotam707.feedmeapp.data.DataManager;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class FeedMeActivity extends AppCompatActivity {
 
     private ListView coursesListView;
-    private MyListViewAdapter coursesListViewAdapter;
+    private FeedMeListViewAdapter coursesListViewAdapter;
     List<Course> coursesList;
     BroadcastReceiver receiver;
 
@@ -35,20 +26,21 @@ public class FeedMeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feed_me);
         coursesList = DataManager.getInstance().getAddedCourses();
+        Log.e("FeedMeActivity", "onCreate: coursesList: "+coursesList.size());
         coursesListView = (ListView)findViewById(R.id.feed_me_courses_list);
-        coursesListViewAdapter = new MyListViewAdapter(this, coursesList);
+        coursesListViewAdapter = new FeedMeListViewAdapter(this,R.layout.feedme_group_item ,coursesList);
+        coursesListView.setAdapter(coursesListViewAdapter);
         receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 int courseId = intent.getIntExtra(CoursesProgressService.INTENT_COURSE_ID, -1);
-                int courseProgress = intent.getIntExtra(CoursesProgressService.INTENT_COURSE_PROGRESS_VALUE, -1);
-
-                coursesListViewAdapter.setCourseProgress(courseId, courseProgress);
-                coursesListView.invalidate();
+                long courseProgress = intent.getLongExtra(  CoursesProgressService.INTENT_COURSE_PROGRESS_VALUE, -1);
+//                coursesListView.invalidate();
+                coursesListViewAdapter.notifyDataSetChanged();
             }
         };
-        // TODO - Start timer!
-        CoursesProgressService.startActionCoursesProgress(this, new ArrayList<Course>(coursesList));
+        // TODO - Start global timer!
+        CoursesProgressService.startActionCoursesProgress(this);
     }
 
     @Override
@@ -65,53 +57,4 @@ public class FeedMeActivity extends AppCompatActivity {
         super.onStop();
     }
 
-    public static class MyListViewAdapter extends ArrayAdapter<Course> {
-
-        Context ctx;
-        List<Course> courseList;
-        public MyListViewAdapter(Context ctx, List<Course> courses) {
-            super(ctx,R.layout.item_listview, courses);
-            this.ctx = ctx;
-            this.courseList = courses;
-        }
-
-        @NonNull
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            MyListViewAdapter.ViewHolder holder = null;
-            LayoutInflater inflater = (LayoutInflater)ctx.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-            if(convertView == null){
-                convertView = inflater.inflate(R.layout.feedme_group_item,parent,false);
-                holder = new ViewHolder(convertView);
-                convertView.setTag(holder);
-            }
-            else{
-                holder = (ViewHolder)convertView.getTag();
-            }
-            Course c = courseList.get(position);
-            holder.image.setImageResource(c.getImageId());
-            holder.name.setText(c.getName());
-            holder.pBar.setIndeterminate(false);
-            holder.pBar.setMax(100);
-            holder.pBar.setProgress(0);
-
-            return convertView;
-        }
-
-        private class ViewHolder {
-            private ImageView image;
-            private TextView name;
-            private ProgressBar pBar;
-
-            public ViewHolder(View v) {
-                image = (ImageView) v.findViewById(R.id.feed_me_courses_image);
-                name = (TextView) v.findViewById(R.id.feed_me_courses);
-                pBar = (ProgressBar) v.findViewById(R.id.main_progress_bar);
-
-            }
-        }
-        public void setCourseProgress(int courseId, int progress) {
-
-        }
-    }
 }

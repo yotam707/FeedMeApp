@@ -12,6 +12,8 @@ public class Course {
     public Category category;
     public String description;
     public List<Steps> stepsList;
+    public long courseProgress;
+    public boolean isCurrentCourse;
 
     public List<Ingredient> getIngredientList() {
         return ingredientList;
@@ -56,7 +58,7 @@ public class Course {
         return stepsList;
     }
 
-    public int getStepsTotalTime(){
+    public long getStepsTotalTime(){
         int count = 0;
         for(int i=0; i<stepsList.size(); i++){
             count+=stepsList.get(i).getTimeImSeconds();
@@ -72,6 +74,8 @@ public class Course {
         this.description = description;
         this.stepsList = stepsList;
         this.ingredientList = ingredientList;
+        this.courseProgress = 0;
+        this.isCurrentCourse = false;
     }
 
     public boolean isFinished() {
@@ -83,17 +87,23 @@ public class Course {
         return true;
     }
 
-    public int getCourseProgress() {
-        int progress = 0;
+    public long getCourseProgress() {
+        //int progress = 0;
         Steps currentStep = this.getCurrentStep();
-        for (Steps step : this.getStepsList()) {
-            if (step.getStepNum() <= currentStep.getStepNum()) {
-                progress += step.getProgress();
-            } else {
-                break;
+        if(currentStep != null) {
+            this.isCurrentCourse = true;
+            for (Steps step : this.getStepsList()) {
+                if (step.getStepNum() <= currentStep.getStepNum()) {
+                    this.courseProgress += step.getProgress();
+                } else {
+                    break;
+                }
             }
         }
-        return progress;
+        else{
+            this.isCurrentCourse = false;
+        }
+        return this.courseProgress;
     }
 
     public Steps getCurrentStep() {

@@ -93,7 +93,15 @@ public class DataManager {
         return groupList;
     }
 
-
+    public  int getPositionByCourseId(int courseId){
+       if(coursesToAdd.size() > 0 && courseId >= 0 ){
+           for(int i =0; i< coursesToAdd.size(); i++){
+               if(coursesToAdd.get(i).getId() == courseId)
+                   return i;
+           }
+       }
+        return -1;
+    }
 
     private void createGroupList() {
         groupList = new ArrayList<String>();

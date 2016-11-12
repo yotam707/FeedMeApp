@@ -1,6 +1,7 @@
 package com.example.yotam707.feedmeapp;
 
 
+import android.os.CountDownTimer;
 import android.widget.ProgressBar;
 
 import java.util.Date;
@@ -9,50 +10,30 @@ import java.util.Date;
  * Created by yotam707 on 9/17/2016.
  */
 public class Steps {
-    public enum State {
-        NOT_STARTED,
-        QUEUED,
-        STARTING,
-        COMPLETE
-    }
     public int stepNum;
-    public volatile int timeImSeconds;
+    public volatile int timeInmSeconds;
     public String description;
     public volatile int mProgress;
-    public volatile State state  = State.NOT_STARTED;
-    public volatile ProgressBar progressBar;
-    private boolean inProgress;
+    public  boolean inProgress;
     private boolean finished;
     private long startTime = -1;
+    //private CountDownTimer stepTimer;
+    private final int interval = 1000;
 
-
-    public ProgressBar getProgressBar() {
-        return progressBar;
-    }
-
-    public void setProgressBar(ProgressBar progressBar) {
-        this.progressBar = progressBar;
-    }
 
     public Steps(int stepNum, int timeImSeconds, String description){
         this.stepNum = stepNum;
-        this.timeImSeconds = timeImSeconds;
+        this.timeInmSeconds = timeImSeconds;
         this.description = description;
         this.mProgress = 0;
-        this.progressBar = null;
+        this.finished = false;
+        this.inProgress = false;
     }
 
     public String getDescription() {
         return description;
     }
 
-    public State getState() {
-        return state;
-    }
-
-    public void setState(State state) {
-        this.state = state;
-    }
 
     public void setDescription(String description) {
         this.description = description;
@@ -67,11 +48,11 @@ public class Steps {
     }
 
     public int getTimeImSeconds() {
-        return timeImSeconds;
+        return timeInmSeconds;
     }
 
     public void setTimeImSeconds(int timeImSeconds) {
-        this.timeImSeconds = timeImSeconds;
+        this.timeInmSeconds = timeImSeconds;
     }
 
     public void startProgress() {
@@ -84,19 +65,24 @@ public class Steps {
     }
 
     public boolean isFinished() {
-        if (!this.finished && this.inProgress) {
-            this.finished = (System.currentTimeMillis() - (this.startTime + ((long) this.timeImSeconds * 1000))) > 0;
-            return this.finished;
-        }
-        this.inProgress = false;
+            if (!this.finished || this.inProgress) {
+                long timeVal = (System.currentTimeMillis() - (this.startTime + ((long) this.timeInmSeconds * 2)));
+                this.finished = timeVal > 0;
+                if (this.finished == true) {
+                    this.inProgress = false;
+                }
+                this.inProgress = true;
+                return this.finished;
+            }
         return this.finished;
     }
 
     public int getProgress() {
         if (this.isFinished())
-            return this.getTimeImSeconds();
+            return 0;
+        else
+            return this.interval;
 
-        // TODO - Finish this function. returns the seconds passed in this setp
-        return 0;
     }
+
 }

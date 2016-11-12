@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal"
-        android:layout_weight="3.5"
+        android:layout_weight="7"
         android:background="@drawable/abc_spinner_textfield_background_material"
         >
 
@@ -30,12 +30,24 @@
 
     </LinearLayout>
 
-    <ListView
+    <LinearLayout
+        android:id="@+id/edit_ll"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/feed_me_courses_list"
-        android:layout_weight="0.5">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@android:color/background_light"
+        android:layout_weight="1">
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/feed_me_courses_list"
+            >
 
-    </ListView>
+        </ListView>
+
+        </LinearLayout>
+
+
+
 
 </LinearLayout>
