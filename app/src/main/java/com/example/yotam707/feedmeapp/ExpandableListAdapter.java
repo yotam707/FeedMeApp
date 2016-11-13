@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,12 +13,15 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.support.v7.graphics.*;
 
 import com.example.yotam707.feedmeapp.data.DataManager;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 
 /**
  * Created by yotam707 on 9/3/2016.
@@ -102,7 +107,8 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         holder.name.setText(c.getName());
         holder.image.setImageResource(c.getImageId());
         holder.add.setImageResource(R.drawable.ic_add);
-
+        Bitmap icon = BitmapFactory.decodeResource(context.getResources(), c.getImageId());
+        holder.name.setBackgroundColor(getDominantColor(icon));
         holder.add.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
@@ -128,15 +134,26 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             }
         });
 
+
         return convertView;
     }
 
-    private class ViewHolder {
+    public static int getDominantColor(Bitmap bitmap) {
+        Bitmap newBitmap = Bitmap.createScaledBitmap(bitmap, 1, 1, true);
+        final int color = newBitmap.getPixel(0, 0);
+        newBitmap.recycle();
+        return color;
+    }
+
+
+
+
+    public class ViewHolder {
         private ImageView image;
         private TextView name;
         private ImageView add;
 
-        public ViewHolder(View v) {
+        public ViewHolder(View v)  {
             image = (ImageView) v.findViewById(R.id.lw_course_img);
             name = (TextView) v.findViewById(R.id.lw_course_name);
             add = (ImageView) v.findViewById(R.id.lw_add);

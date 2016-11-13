@@ -4,8 +4,9 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -69,7 +70,8 @@ public class ListViewAdapter extends ArrayAdapter<Course> implements Filterable 
         holder.image.setImageResource(c.getImageId());
         holder.name.setText(c.getName());
         holder.add.setImageResource(R.drawable.ic_add);
-
+        Bitmap icon = BitmapFactory.decodeResource(activity.getResources(), c.getImageId());
+        holder.name.setBackgroundColor(ExpandableListAdapter.getDominantColor(icon));
         holder.add.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
