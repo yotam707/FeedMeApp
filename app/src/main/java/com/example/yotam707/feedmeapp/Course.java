@@ -23,6 +23,12 @@ public class Course {
     private static final int MAX = 100;
     public int stepsCount;
     public int maxStepsTime;
+
+
+    public List<Ingredient> getIngredientList() {
+        return ingredientList;
+    }
+
     public List<Ingredient> ingredientList;
     public int getId(){return this.id;}
     public int getImageId() {

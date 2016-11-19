@@ -126,39 +126,10 @@ public class CoursesProgressService extends IntentService {
         manager.notify(uniqueId, builder.build());
     }
 
-    private void sendCourseProgress(int courseId, long progress) {
+    private void sendCourseProgress(int courseId, int progress) {
         Intent intent = new Intent(INTENT_COURSE_PROGRESS);
         intent.putExtra(INTENT_COURSE_ID, courseId);
         intent.putExtra(INTENT_COURSE_PROGRESS_VALUE, progress);
         broadcaster.sendBroadcast(intent);
     }
-
-    public class NotificationAsyncTask extends AsyncTask<String,String,Void> {
-        private String response;
-        @Override
-        protected Void doInBackground(String... strings) {
-            try{
-                String title = strings[0];
-                String text = strings[1];
-                int uniqueId = (int)System.currentTimeMillis();
-                NotificationCompat.Builder builder = new NotificationCompat.Builder(CoursesProgressService.this)
-                        .setSmallIcon(R.drawable.feed_me_logo)
-                        .setContentTitle(title)
-                        .setContentText(text);
-                Intent notificationIntent = new Intent(CoursesProgressService.this,FeedMeActivity.class);
-                PendingIntent contentIntent = PendingIntent.getService(CoursesProgressService.this,0,notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-                builder.setContentIntent(contentIntent);
-                NotificationManager manager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
-                manager.notify(uniqueId, builder.build());
-            }
-            catch(Exception ex){
-                ex.printStackTrace();
-                response = ex.getMessage();
-                Log.e("notification async", response);
-            }
-
-            return null;
-        }
-    }
-
 }

@@ -32,13 +32,13 @@ public class DataManager {
     private GenQueue<Course> coursesToAdd;
     private List<Course> coursesToAddList;
     private Map<String, List<Course>> coursesCollection;
-    List<String> groupList;
-    List<Category> categoriesList;
-    GenQueue<Steps> stepsGenQueue;
-    List<Steps> stepsList;
-    List<Ingredient> ingredientList;
-    Menu addedItemsMenu;
-    SubMenu subMenu;
+    private List<String> groupList;
+    private List<Category> categoriesList;
+    private GenQueue<Steps> stepsGenQueue;
+    private List<Steps> stepsList;
+    private List<Ingredient> ingredientList;
+    private Menu addedItemsMenu;
+    private SubMenu subMenu;
 
     public static DataManager getInstance(){
         if(mInstance == null){
@@ -164,9 +164,6 @@ public class DataManager {
 
         Course[] desertCourses = {  new Course(7,R.drawable.rice, "Chocolate Cake",categoriesList.get(3), "Description 7", new ArrayList<>(stepsList), ingredientList),
                 new Course(8,R.drawable.rice, "Banana Roti",categoriesList.get(3), "Description 8", new ArrayList<>(stepsList), ingredientList)};
-
-
-
 
         for (String course : groupList) {
             int i=0;
