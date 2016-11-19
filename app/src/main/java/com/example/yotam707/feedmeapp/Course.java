@@ -17,7 +17,6 @@ public class Course {
     public String description;
     public GenQueue<Steps> stepsGenQueue;
     public List<Steps> stepsList;
-    public Queue<Steps> temp;
     public int courseProgress;
     public boolean isCurrentCourse;
     public int stepsTotalTime;

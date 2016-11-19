@@ -3,14 +3,9 @@ package com.example.yotam707.feedmeapp;
 import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.Intent;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
+import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Looper;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -19,8 +14,6 @@ import android.widget.Toast;
 import com.example.yotam707.feedmeapp.data.DataManager;
 
 import java.util.List;
-import java.util.UUID;
-import java.util.logging.Handler;
 
 public class CoursesProgressService extends IntentService {
 
