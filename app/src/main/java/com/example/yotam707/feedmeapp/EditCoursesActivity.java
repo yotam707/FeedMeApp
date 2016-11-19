@@ -33,7 +33,7 @@ public class EditCoursesActivity extends Activity {
         listView = (ListView)findViewById(R.id.edit_list_view);
         wantMoreBtn = (Button)findViewById(R.id.back_button_edit_course_activity);
         feedMeBtn = (Button)findViewById(R.id.next_button_edit_course_activity);
-        addedCourse = DataManager.getInstance().getAddedCourses();
+        addedCourse = DataManager.getInstance().getListAddedCourses();
         adapter = new EditListViewAdapter(this, addedCourse);
         listView.setAdapter(adapter);
 
@@ -57,7 +57,7 @@ public class EditCoursesActivity extends Activity {
     }
 
     private void feedMeClick(){
-        List<Course> list = DataManager.getInstance().getAddedCourses();
+        List<Course> list = DataManager.getInstance().getListAddedCourses();
         final Activity thisContext = this;
         if(list.size() <= 0 || list== null){
             AlertDialog.Builder builder = new AlertDialog.Builder(this);

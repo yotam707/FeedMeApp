@@ -1,24 +1,22 @@
 package com.example.yotam707.feedmeapp;
 
 
-import android.os.CountDownTimer;
-import android.widget.ProgressBar;
-
-import java.util.Date;
-
 /**
  * Created by yotam707 on 9/17/2016.
  */
 public class Steps {
     public int stepNum;
-    public volatile int timeInmSeconds;
+    public  int timeInmSeconds;
     public String description;
-    public volatile int mProgress;
-    public  boolean inProgress;
+    public  int mProgress;
+    public  boolean currentStep;
+    public boolean wasNotificationSent;
     private boolean finished;
-    private long startTime = -1;
-    //private CountDownTimer stepTimer;
-    private final int interval = 1000;
+    private int startTime;
+    public int currentTime;
+    public int calculatedTime;
+    public int currentProgress;
+    private static final int MAX = 100;
 
 
     public Steps(int stepNum, int timeImSeconds, String description){
@@ -27,7 +25,13 @@ public class Steps {
         this.description = description;
         this.mProgress = 0;
         this.finished = false;
-        this.inProgress = false;
+        this.currentStep = false;
+        this.startTime = -1;
+        this.currentTime = 0;
+        this.calculatedTime = 0;
+        this.currentProgress = 0;
+        this.wasNotificationSent = false;
+
     }
 
     public String getDescription() {
@@ -56,33 +60,72 @@ public class Steps {
     }
 
     public void startProgress() {
-        this.inProgress = true;
-        this.startTime = System.currentTimeMillis();
+
+        this.currentStep = true;
+        this.startTime = (int)System.currentTimeMillis();
     }
 
-    public boolean isInProgress() {
-        return this.inProgress;
+    public boolean isCurrentStep() {
+        isStepFinish();
+        return this.currentStep;
     }
 
-    public boolean isFinished() {
-            if (!this.finished || this.inProgress) {
-                long timeVal = (System.currentTimeMillis() - (this.startTime + ((long) this.timeInmSeconds * 2)));
-                this.finished = timeVal > 0;
-                if (this.finished == true) {
-                    this.inProgress = false;
-                }
-                this.inProgress = true;
-                return this.finished;
+    public boolean isCurrentStepStarted(){
+        if(this.startTime > 0)
+            return true;
+        return false;
+    }
+
+    public boolean checkStepComplete(){
+        if(this.currentStep && !this.finished){
+            if(this.isStepFinish()){
+                this.currentStep = false;
+                return true;
             }
-        return this.finished;
+            else{
+                this.currentStep = true;
+                return false;
+            }
+        }
+        return true;
     }
+
+    public boolean isStepFinish(){
+        boolean temp = false;
+        if(this.startTime > 0) {
+            this.currentTime = ((int) System.currentTimeMillis());
+            this.calculatedTime = this.currentTime - this.startTime;
+            if(this.calculatedTime < this.timeInmSeconds){
+                this.finished = false;
+                this.currentStep = true;
+                temp = false;
+            }
+            else{
+                this.currentProgress = MAX;
+                this.currentStep = false;
+                this.finished = true;
+                temp = true;
+            }
+        }
+        return temp;
+    }
+
 
     public int getProgress() {
-        if (this.isFinished())
-            return 0;
-        else
-            return this.interval;
-
+        int temp = 0;
+        if (!this.isStepFinish()) {
+            if (this.currentProgress < MAX) {
+                temp = ((this.calculatedTime * 100) / this.timeInmSeconds);
+                this.currentProgress = temp;
+            }
+            else {
+                temp = MAX;
+                this.currentProgress = temp;
+            }
+        }
+        else if(this.currentProgress == MAX){
+            temp = MAX;
+        }
+        return temp;
     }
-
 }

@@ -1,36 +1,39 @@
 package com.example.yotam707.feedmeapp;
 
 import android.app.IntentService;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
+import android.os.Looper;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.example.yotam707.feedmeapp.data.DataManager;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+import java.util.logging.Handler;
 
-/**
- * An {@link IntentService} subclass for handling asynchronous task requests in
- * a service on a separate handler thread.
- * <p>
- * TODO: Customize class - update intent actions, extra parameters and static
- * helper methods.
- */
 public class CoursesProgressService extends IntentService {
-    // TODO: Rename actions, choose action names that describe tasks that this
-    // IntentService can perform, e.g. ACTION_FETCH_NEW_ITEMS
+
     private static final String ACTION_START_COURSES_PROGRESS = "com.example.yotam707.feedmeapp.action.START_COURSES_PROGRESS";
 
-    // TODO: Rename parameters
-    private static final String EXTRA_COURSES_LIST = "com.example.yotam707.feedmeapp.extra.COURSES_LIST";
 
     public static final String INTENT_COURSE_PROGRESS = "com.example.yotam707.feedmeapp.extra.INTENT_COURSE_PROGRESS";
     public static final String INTENT_COURSE_PROGRESS_VALUE = "com.example.yotam707.feedmeapp.extra.INTENT_COURSE_PROGRESS_VALUE";
     public static final String INTENT_COURSE_ID = "com.example.yotam707.feedmeapp.extra.INTENT_COURSE_ID";
-
     LocalBroadcastManager broadcaster;
-    private ArrayList<Course> courses;
+    private GenQueue<Course> courses;
+    private List<Course> coursesList;
+    NotificationManager manager;
 
     public CoursesProgressService() {
         super("CoursesProgressService");
@@ -38,64 +41,96 @@ public class CoursesProgressService extends IntentService {
     }
 
     @Override
-    public void onStart(Intent intent, int startId) {
-        super.onStart(intent, startId);
-        courses = new ArrayList<>(DataManager.getInstance().getAddedCourses());
+    public void onCreate() {
+        courses = DataManager.getInstance().getQueueAddedCourses();
+        coursesList = DataManager.getInstance().getListAddedCourses();
+        manager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+        super.onCreate();
+
     }
 
-    /**
-     * Starts this service to perform action Foo with the given parameters. If
-     * the service is already performing a task this action will be queued.
-     *
-     * @see IntentService
-     */
-    // TODO: Customize helper method
+    @Override
+    public void onStart(Intent intent, int startId) {
+        super.onStart(intent, startId);
+    }
+
     public static void startActionCoursesProgress(Context context) {
         Intent intent = new Intent(context, CoursesProgressService.class);
         intent.setAction(ACTION_START_COURSES_PROGRESS);
-        //intent.putExtra(EXTRA_COURSES_LIST, coursesIndexes);
         context.startService(intent);
     }
+
 
     @Override
     protected void onHandleIntent(Intent intent) {
         if (intent != null) {
             final String action = intent.getAction();
             if (ACTION_START_COURSES_PROGRESS.equals(action)) {
-                //final ArrayList<Integer> coursesIndexes = (ArrayList) intent.getSerializableExtra(EXTRA_COURSES_LIST);
                 handleActionCoursesProgress();
             }
         }
     }
 
-    /**
-     * Handle action Foo in the provided background thread with the provided
-     * parameters.
-     */
-    private void handleActionCoursesProgress() {
-        boolean allFinished = true;
-        for (Course course : courses) {
-            if (!course.isFinished()) {
-                allFinished= false;
-                Steps currentStep = course.getCurrentStep();
-                if(currentStep != null) {
-                    if (!currentStep.isInProgress()) {
-                        currentStep.startProgress();
+    private void handleActionCoursesProgress(){
+        try {
+            boolean allFinished = true;
+            Course currentCourse = courses.peek();
+            if (currentCourse != null) {
+                allFinished = false;
+                Steps currentStep = currentCourse.getCurrentStep();
+                if(currentStep != null){
+                    if(currentStep.currentProgress == 0 && !currentStep.wasNotificationSent){
+                        if(!currentStep.wasNotificationSent){
+                            sendNotification(currentCourse.getName(), currentStep.getDescription());
+                            currentStep.wasNotificationSent = true;
+                        }
                     }
-                    long courseProg = course.getCourseProgress();
-                    this.sendCourseProgress(course.getId(), courseProg);
-                    break;
+                    if(!currentCourse.isFinished(currentStep)) {
+                        Log.e("current Course", "name:" + currentCourse.getName());
+                        if (currentStep != null) {
+                            Log.e("current Step", "number:" + currentStep.getStepNum());
+                            currentCourse.getCourseProgress(currentStep);
+                            int courseProgress = currentStep.currentProgress;
+                            if (currentCourse.maxStepsTime == courseProgress) {
+                                courses.remove(currentCourse);
+                            }
+                            Log.e("progress service data", "name:" + currentCourse.getName() + " progress:" + courseProgress);
+                            this.sendCourseProgress(currentCourse.getId(), courseProgress);
+                        }
+                    }
+                    else{
+                        courses.remove(currentCourse);
+                    }
+                }
+                else{
+                    courses.remove(currentCourse);
                 }
             }
-        }
-
-        if (!allFinished) {
-            try {
-                Thread.sleep(1000);
+            if (!allFinished) {
+                Toast.makeText(this, "all finished is false", Toast.LENGTH_LONG)
+                        .show();
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                }
+                CoursesProgressService.startActionCoursesProgress(this.getApplicationContext());
             }
-            catch (InterruptedException e) { }
-            CoursesProgressService.startActionCoursesProgress(this.getApplicationContext());
+            Toast.makeText(this, "all finished is true", Toast.LENGTH_LONG);
         }
+        catch(Exception ex){
+            Log.e("CourseProgressService", ex.getMessage());
+        }
+    }
+    public void sendNotification(String title, String text){
+        int uniqueId = (int)System.currentTimeMillis();
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext())
+                .setSmallIcon(R.drawable.feed_me_logo)
+                .setContentTitle(title)
+                .setContentText(text);
+        Intent notificationIntent = new Intent(getApplicationContext(),CoursesProgressService.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(),0,notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        builder.setContentIntent(contentIntent);
+        manager.notify(uniqueId, builder.build());
     }
 
     private void sendCourseProgress(int courseId, long progress) {
@@ -104,4 +139,33 @@ public class CoursesProgressService extends IntentService {
         intent.putExtra(INTENT_COURSE_PROGRESS_VALUE, progress);
         broadcaster.sendBroadcast(intent);
     }
+
+    public class NotificationAsyncTask extends AsyncTask<String,String,Void> {
+        private String response;
+        @Override
+        protected Void doInBackground(String... strings) {
+            try{
+                String title = strings[0];
+                String text = strings[1];
+                int uniqueId = (int)System.currentTimeMillis();
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(CoursesProgressService.this)
+                        .setSmallIcon(R.drawable.feed_me_logo)
+                        .setContentTitle(title)
+                        .setContentText(text);
+                Intent notificationIntent = new Intent(CoursesProgressService.this,FeedMeActivity.class);
+                PendingIntent contentIntent = PendingIntent.getService(CoursesProgressService.this,0,notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                builder.setContentIntent(contentIntent);
+                NotificationManager manager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+                manager.notify(uniqueId, builder.build());
+            }
+            catch(Exception ex){
+                ex.printStackTrace();
+                response = ex.getMessage();
+                Log.e("notification async", response);
+            }
+
+            return null;
+        }
+    }
+
 }

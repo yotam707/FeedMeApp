@@ -25,7 +25,7 @@ public class FeedMeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feed_me);
-        coursesList = DataManager.getInstance().getAddedCourses();
+        coursesList = DataManager.getInstance().getListAddedCourses();
         Log.e("FeedMeActivity", "onCreate: coursesList: "+coursesList.size());
         coursesListView = (ListView)findViewById(R.id.feed_me_courses_list);
         coursesListViewAdapter = new FeedMeListViewAdapter(this,R.layout.feedme_group_item ,coursesList);
@@ -34,9 +34,10 @@ public class FeedMeActivity extends AppCompatActivity {
             @Override
             public void onReceive(Context context, Intent intent) {
                 int courseId = intent.getIntExtra(CoursesProgressService.INTENT_COURSE_ID, -1);
-                long courseProgress = intent.getLongExtra(  CoursesProgressService.INTENT_COURSE_PROGRESS_VALUE, -1);
-//                coursesListView.invalidate();
+                int courseProgress = intent.getIntExtra(CoursesProgressService.INTENT_COURSE_PROGRESS_VALUE, -1);
+                Log.e("onReceive", "course id:" + courseId+ ", courseProgress:" +courseProgress);
                 coursesListViewAdapter.notifyDataSetChanged();
+
             }
         };
         // TODO - Start global timer!

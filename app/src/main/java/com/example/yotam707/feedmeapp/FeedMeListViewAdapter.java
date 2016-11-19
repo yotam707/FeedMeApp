@@ -27,6 +27,7 @@ public class FeedMeListViewAdapter extends ArrayAdapter<Course> {
     private static final String TAG = "FeedMeListViewAdapter";
     Context ctx;
     List<Course> courseList;
+    private static final int MAX = 100;
 
     public List<Course> getCourseList() {
         return courseList;
@@ -40,8 +41,7 @@ public class FeedMeListViewAdapter extends ArrayAdapter<Course> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         Log.e(TAG, "getView");
-        //courseList = DataManager.getInstance().getAddedCourses();
-        ViewHolder holder = null;
+        ViewHolder holder;
         LayoutInflater inflater = (LayoutInflater)ctx.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
         if(convertView == null){
             convertView = inflater.inflate(R.layout.feedme_group_item,parent,false);
@@ -51,22 +51,15 @@ public class FeedMeListViewAdapter extends ArrayAdapter<Course> {
         else{
             holder = (ViewHolder)convertView.getTag();
         }
+
         Course c = courseList.get(position);
-        long totalTime = c.getStepsTotalTime();
+
+        Log.e("getViewData","progress:" + c.courseProgress+ "name:" + c.getName());
         holder.image.setImageResource(c.getImageId());
         holder.name.setText(c.getName());
         holder.pBar.setIndeterminate(false);
-        holder.pBar.setMax((int)totalTime);
-        if(c.isCurrentCourse) {
-            holder.pBar.setProgress((int) c.getCourseProgress());
-        }
-        else if(c.isFinished()){
-            holder.pBar.setProgress((int) totalTime);
-        }
-        else{
-            holder.pBar.setProgress(0);
-        }
-
+        holder.pBar.setMax(MAX*c.getStepsList().size());
+        holder.pBar.setProgress(c.courseProgress);
         return convertView;
     }
 
@@ -78,7 +71,7 @@ public class FeedMeListViewAdapter extends ArrayAdapter<Course> {
 
     }
 
-    public void setCourseProgress(int courseId, long progress) {
+    public void setCourseProgress(int courseId, int progress) {
         //notifyDataSetChanged();
     }
 

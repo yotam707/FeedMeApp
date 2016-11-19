@@ -1,6 +1,10 @@
 package com.example.yotam707.feedmeapp;
 
+import android.content.Context;
+
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
 
 /**
  * Created by yotam707 on 9/5/2016.
@@ -11,57 +15,42 @@ public class Course {
     public String name;
     public Category category;
     public String description;
+    public GenQueue<Steps> stepsGenQueue;
     public List<Steps> stepsList;
-    public long courseProgress;
+    public Queue<Steps> temp;
+    public int courseProgress;
     public boolean isCurrentCourse;
-
-    public List<Ingredient> getIngredientList() {
-        return ingredientList;
-    }
-
+    public int stepsTotalTime;
+    private static final int MAX = 100;
+    public int stepsCount;
+    public int maxStepsTime;
     public List<Ingredient> ingredientList;
-
     public int getId(){return this.id;}
     public int getImageId() {
         return imageId;
     }
-
     public void setImageId(int id) {
         this.imageId = id;
     }
-
     public String getName() {
         return name;
     }
-
     public void setName(String name) {
         this.name = name;
     }
-
     public Category getCategory() {
         return category;
     }
-
-    public void setCategory(Category category) {
-        this.category = category;
-    }
-
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
 
-    public List<Steps> getStepsList() {
-        return stepsList;
-    }
 
-    public long getStepsTotalTime(){
+    public int getStepsTotalTime(){
         int count = 0;
-        for(int i=0; i<stepsList.size(); i++){
-            count+=stepsList.get(i).getTimeImSeconds();
+        for(int i=0; i<stepsGenQueue.getSize(); i++){
+            count+=stepsGenQueue.getByIndex(i).getTimeImSeconds();
         }
         return count;
     }
@@ -73,44 +62,76 @@ public class Course {
         this.name = name;
         this.description = description;
         this.stepsList = stepsList;
+        getStepsToQueue();
         this.ingredientList = ingredientList;
         this.courseProgress = 0;
         this.isCurrentCourse = false;
+        this.stepsTotalTime = getStepsTotalTime();
+        this.stepsCount = stepsList.size();
+        this.maxStepsTime = this.stepsCount*MAX;
     }
 
-    public boolean isFinished() {
-        for (Steps step : this.getStepsList()) {
-            if (!step.isFinished()) {
-                return false;
+    public void getStepsToQueue(){
+        this.stepsGenQueue = new GenQueue<Steps>();
+        for(Steps s: stepsList){
+            s.currentStep = false;
+            Steps temp = new Steps(s.stepNum,s.timeInmSeconds,s.description);
+            this.stepsGenQueue.enqueue(temp);
+        }
+    }
+    public List<Steps> getStepsList(){
+        return stepsList;
+    }
+
+
+    public boolean isFinished(Steps currentStep ){
+        //Steps currentStep = this.getCurrentStep();
+        if(this.courseProgress < MAX*stepsCount) {
+            if(this.stepsGenQueue.getSize() > 0){
+                if(currentStep.isCurrentStepStarted()) {
+                    if (currentStep.isStepFinish()) {
+                        this.stepsGenQueue.remove(currentStep);
+                    }
+                    return false;
+                }
+                else{
+                    currentStep.startProgress();
+                    return false;
+                }
             }
         }
         return true;
     }
 
-    public long getCourseProgress() {
-        //int progress = 0;
-        Steps currentStep = this.getCurrentStep();
-        if(currentStep != null) {
-            this.isCurrentCourse = true;
-            for (Steps step : this.getStepsList()) {
-                if (step.getStepNum() <= currentStep.getStepNum()) {
-                    this.courseProgress += step.getProgress();
-                } else {
-                    break;
+
+    public int getCourseProgress(Steps currentStep){
+        //Steps currentStep = this.getCurrentStep();
+        if(currentStep != null){
+            if(this.courseProgress < this.MAX*stepsCount){
+                currentStep.getProgress();
+                if(currentStep.currentProgress == MAX){
+                    this.courseProgress = this.courseProgress + MAX;
+                    stepsGenQueue.remove(currentStep);
                 }
             }
         }
         else{
-            this.isCurrentCourse = false;
+            this.courseProgress = MAX*stepsCount;
         }
         return this.courseProgress;
     }
 
+
     public Steps getCurrentStep() {
-        for (Steps step : this.getStepsList()) {
-            if (!step.isFinished()) {
-                return step;
+        if(this.courseProgress < MAX*stepsCount) {
+            Steps currentStep = this.stepsGenQueue.peek();
+            if(currentStep != null){
+                return currentStep;
             }
+            return null;
+        }
+        else {
+            this.courseProgress = MAX*stepsCount;
         }
         return null;
     }

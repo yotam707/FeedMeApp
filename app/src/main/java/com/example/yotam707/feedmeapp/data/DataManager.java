@@ -9,6 +9,7 @@ import android.view.SubMenu;
 
 import com.example.yotam707.feedmeapp.Category;
 import com.example.yotam707.feedmeapp.Course;
+import com.example.yotam707.feedmeapp.GenQueue;
 import com.example.yotam707.feedmeapp.Ingredient;
 import com.example.yotam707.feedmeapp.R;
 import com.example.yotam707.feedmeapp.Steps;
@@ -28,10 +29,12 @@ public class DataManager {
     private static DataManager mInstance = null;
     private List<Course> courses;
     private List<Course> allCourses;
-    private List<Course> coursesToAdd;
+    private GenQueue<Course> coursesToAdd;
+    private List<Course> coursesToAddList;
     private Map<String, List<Course>> coursesCollection;
     List<String> groupList;
     List<Category> categoriesList;
+    GenQueue<Steps> stepsGenQueue;
     List<Steps> stepsList;
     List<Ingredient> ingredientList;
     Menu addedItemsMenu;
@@ -46,7 +49,8 @@ public class DataManager {
 
     private DataManager() {
         allCourses = new ArrayList<Course>();
-        coursesToAdd = new ArrayList<Course>();
+        coursesToAddList = new ArrayList<Course>();
+        coursesToAdd = new GenQueue<Course>();
         createStepsList();
         createIngredientList();
         createCategoryList();
@@ -61,23 +65,31 @@ public class DataManager {
 
     }
     public void addCourse(Course c){
-        coursesToAdd.add(c);
+        //Course addedC = new Course(c.id, c.imageId, c.name,c.category, c.description, c.stepsList,c.ingredientList);
+        coursesToAddList.add(c);
+        coursesToAdd.enqueue(c);
         if(subMenu != null){
             subMenu.add(c.getName());
         }
     }
 
-    public List<Course> getAddedCourses(){
+    public GenQueue<Course> getQueueAddedCourses(){
         return coursesToAdd;
+    }
+
+    public List<Course> getListAddedCourses(){
+        return coursesToAddList;
     }
 
     public void removeCourse(Course c){
         int index = coursesToAdd.indexOf(c);
-        coursesToAdd.remove(index);
+        coursesToAddList.remove(index);
+        coursesToAdd.remove(c);
         if(subMenu != null){
             subMenu.removeItem(index);
         }
     }
+
     public List<Course> getCourses() {
         return allCourses;
     }
@@ -94,9 +106,9 @@ public class DataManager {
     }
 
     public  int getPositionByCourseId(int courseId){
-       if(coursesToAdd.size() > 0 && courseId >= 0 ){
-           for(int i =0; i< coursesToAdd.size(); i++){
-               if(coursesToAdd.get(i).getId() == courseId)
+       if(coursesToAdd.getSize() > 0 && courseId >= 0 ){
+           for(int i =0; i< coursesToAdd.getSize(); i++){
+               if(coursesToAdd.getByIndex(i).getId() == courseId)
                    return i;
            }
        }
@@ -119,8 +131,10 @@ public class DataManager {
     }
 
     private void createStepsList(){
+        stepsGenQueue = new GenQueue<Steps>();
         stepsList = new ArrayList<Steps>();
-        for (int i=1; i<8; i++){
+        for (int i=1; i<3; i++){
+            stepsGenQueue.enqueue(new Steps(i,5000,"this is step " +i));
             stepsList.add(new Steps(i,5000,"this is step " +i));
         }
     }
@@ -136,20 +150,20 @@ public class DataManager {
     private void createCollection() {
         coursesCollection = new HashMap<>();
 
-        Course[] firstsCourse = {new Course(1,R.drawable.salad, "Salad",categoriesList.get(1), "Description 1", stepsList, ingredientList),
-                new Course(2,R.drawable.eggplant, "EggPlant",categoriesList.get(1), "Description 2", stepsList, ingredientList),
-                new Course(3,R.drawable.hasbrownies, "Hash Brown",categoriesList.get(1), "Description 3", stepsList, ingredientList)};
+        Course[] firstsCourse = {new Course(1,R.drawable.rice, "Salad",categoriesList.get(1), "Description 1", new ArrayList<>(stepsList), ingredientList),
+                new Course(2,R.drawable.rice, "EggPlant",categoriesList.get(1), "Description 2", new ArrayList<>(stepsList), ingredientList),
+                new Course(3,R.drawable.rice, "Hash Brown",categoriesList.get(1), "Description 3", new ArrayList<>(stepsList), ingredientList)};
 
 
 
-        Course[] mainCourses = { new Course(4,R.drawable.tomatopasta, "Tomato Pasta",categoriesList.get(2), "Description 4", stepsList, ingredientList),
-                new Course(5,R.drawable.omlette, "Omelet",categoriesList.get(2), "Description 5", stepsList, ingredientList),
-                new Course(6,R.drawable.fish, "Fish",categoriesList.get(2), "Description 6", stepsList, ingredientList)};
+        Course[] mainCourses = { new Course(4,R.drawable.rice, "Tomato Pasta",categoriesList.get(2), "Description 4", new ArrayList<>(stepsList), ingredientList),
+                new Course(5,R.drawable.rice, "Omelet",categoriesList.get(2), "Description 5", new ArrayList<>(stepsList), ingredientList),
+                new Course(6,R.drawable.rice, "Fish",categoriesList.get(2), "Description 6", new ArrayList<>(stepsList), ingredientList)};
 
 
 
-        Course[] desertCourses = {  new Course(7,R.drawable.chocolatecake, "Chocolate Cake",categoriesList.get(3), "Description 7", stepsList, ingredientList),
-                new Course(8,R.drawable.bananaroti, "Banana Roti",categoriesList.get(3), "Description 8", stepsList, ingredientList)};
+        Course[] desertCourses = {  new Course(7,R.drawable.rice, "Chocolate Cake",categoriesList.get(3), "Description 7", new ArrayList<>(stepsList), ingredientList),
+                new Course(8,R.drawable.rice, "Banana Roti",categoriesList.get(3), "Description 8", new ArrayList<>(stepsList), ingredientList)};
 
 
 

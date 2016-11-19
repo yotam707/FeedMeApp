@@ -100,7 +100,7 @@ public class MainCourseActivity extends AppCompatActivity implements NavigationV
     }
 
     private void attemptContinue(){
-        List<Course> list = DataManager.getInstance().getAddedCourses();
+        List<Course> list = DataManager.getInstance().getListAddedCourses();
         if(list.size() <= 0 || list== null){
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Notification");

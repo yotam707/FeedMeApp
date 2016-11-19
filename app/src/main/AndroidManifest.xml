@@ -29,6 +29,9 @@
 
         <service
             android:name=".CoursesProgressService"
+            android:exported="false" />
+        <service
+            android:name=".NotificationService"
             android:exported="false"></service>
     </application>
 
