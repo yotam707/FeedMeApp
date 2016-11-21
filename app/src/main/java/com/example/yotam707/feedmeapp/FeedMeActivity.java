@@ -4,6 +4,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
@@ -12,6 +15,9 @@ import android.widget.ListView;
 
 import com.example.yotam707.feedmeapp.data.DataManager;
 
+
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class FeedMeActivity extends AppCompatActivity {
@@ -25,7 +31,10 @@ public class FeedMeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feed_me);
-        coursesList = DataManager.getInstance().getListAddedCourses();
+
+        coursesList = DataManager.getInstance(getApplicationContext()).getListAddedCourses();
+
+        //coursesList = DataManager.getInstance().getListAddedCourses();
         Log.e("FeedMeActivity", "onCreate: coursesList: "+coursesList.size());
         coursesListView = (ListView)findViewById(R.id.feed_me_courses_list);
         coursesListViewAdapter = new FeedMeListViewAdapter(this,R.layout.feedme_group_item ,coursesList);

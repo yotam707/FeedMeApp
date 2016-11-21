@@ -60,12 +60,12 @@ public class MainCourseActivity extends AppCompatActivity implements NavigationV
 
         //handling navigation view item event
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        DataManager.getInstance().createNavigationMenu(navigationView);
+        DataManager.getInstance(getApplicationContext()).createNavigationMenu(navigationView);
         assert navigationView != null;
         navigationView.setNavigationItemSelectedListener(this);
 
         //set viewpager adapter
-        ViewPagerAdapter pagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+        ViewPagerAdapterMain pagerAdapter = new ViewPagerAdapterMain(getSupportFragmentManager());
         viewPager.setAdapter(pagerAdapter);
 
         //change Tab selection when swipe ViewPager
@@ -100,7 +100,8 @@ public class MainCourseActivity extends AppCompatActivity implements NavigationV
     }
 
     private void attemptContinue(){
-        List<Course> list = DataManager.getInstance().getListAddedCourses();
+
+        List<Course> list = DataManager.getInstance(getApplicationContext()).getListAddedCourses();
         if(list.size() <= 0 || list== null){
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Notification");

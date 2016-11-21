@@ -16,6 +16,7 @@ import android.widget.ListView;
 
 import com.example.yotam707.feedmeapp.data.DataManager;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class EditCoursesActivity extends Activity {
@@ -33,7 +34,10 @@ public class EditCoursesActivity extends Activity {
         listView = (ListView)findViewById(R.id.edit_list_view);
         wantMoreBtn = (Button)findViewById(R.id.back_button_edit_course_activity);
         feedMeBtn = (Button)findViewById(R.id.next_button_edit_course_activity);
-        addedCourse = DataManager.getInstance().getListAddedCourses();
+
+        addedCourse = DataManager.getInstance(getApplicationContext()).getListAddedCourses();
+
+        //addedCourse = DataManager.getInstance().getListAddedCourses();
         adapter = new EditListViewAdapter(this, addedCourse);
         listView.setAdapter(adapter);
 
@@ -57,7 +61,10 @@ public class EditCoursesActivity extends Activity {
     }
 
     private void feedMeClick(){
-        List<Course> list = DataManager.getInstance().getListAddedCourses();
+
+        List<Course> list = DataManager.getInstance(getApplicationContext()).getListAddedCourses();
+
+        //List<Course> list = DataManager.getInstance().getListAddedCourses();
         final Activity thisContext = this;
         if(list.size() <= 0 || list== null){
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -74,6 +81,13 @@ public class EditCoursesActivity extends Activity {
             alertDialog.show();
         }
         else{
+            for(Course c : list){
+                if(c.stepsList.size() <= 0){
+                    c.stepsList = new ArrayList<>(DataManager.getInstance(getApplicationContext()).getStepsList());
+                    c.stepsGenQueue.clear();
+                    c.getStepsToQueue();
+                }
+            }
             Intent intent =  new Intent(this, FeedMeActivity.class);
             startActivity(intent);
         }

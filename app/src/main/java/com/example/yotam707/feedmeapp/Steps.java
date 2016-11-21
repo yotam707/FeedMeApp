@@ -1,6 +1,8 @@
 package com.example.yotam707.feedmeapp;
 
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * Created by yotam707 on 9/17/2016.
  */
@@ -15,11 +17,13 @@ public class Steps {
     private int startTime;
     public int currentTime;
     public int calculatedTime;
+    public int courseId;
     public int currentProgress;
     private static final int MAX = 100;
 
 
-    public Steps(int stepNum, int timeImSeconds, String description){
+    public Steps(int courseId, int stepNum, int timeImSeconds, String description){
+        this.courseId = courseId;
         this.stepNum = stepNum;
         this.timeInmSeconds = timeImSeconds;
         this.description = description;
@@ -32,6 +36,13 @@ public class Steps {
         this.currentProgress = 0;
         this.wasNotificationSent = false;
 
+    }
+    public int getCourseId() {
+        return courseId;
+    }
+
+    public void setCourseId(int courseId) {
+        this.courseId = courseId;
     }
 
     public String getDescription() {
@@ -62,7 +73,7 @@ public class Steps {
     public void startProgress() {
 
         this.currentStep = true;
-        this.startTime = (int)System.currentTimeMillis();
+        this.startTime = (int)TimeUnit.SECONDS.convert(System.currentTimeMillis(),TimeUnit.MILLISECONDS);
     }
 
     public boolean isCurrentStep() {
@@ -93,8 +104,9 @@ public class Steps {
     public boolean isStepFinish(){
         boolean temp = false;
         if(this.startTime > 0) {
-            this.currentTime = ((int) System.currentTimeMillis());
-            this.calculatedTime = this.currentTime - this.startTime;
+            this.currentTime = (int)TimeUnit.SECONDS.convert(System.currentTimeMillis(),TimeUnit.MILLISECONDS);
+
+            this.calculatedTime = (int)TimeUnit.SECONDS.toMillis(this.currentTime - this.startTime);
             if(this.calculatedTime < this.timeInmSeconds){
                 this.finished = false;
                 this.currentStep = true;

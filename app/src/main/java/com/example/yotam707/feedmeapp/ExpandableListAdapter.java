@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,10 +18,11 @@ import android.support.v7.graphics.*;
 
 import com.example.yotam707.feedmeapp.data.DataManager;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+
+import static java.security.AccessController.getContext;
 
 
 /**
@@ -29,11 +31,11 @@ import java.util.Map;
 public class ExpandableListAdapter extends BaseExpandableListAdapter {
 
     private Activity context;
-    private Map<String, List<Course>> coursesCollection;
-    private List<String> groupList;
+    private Map<CourseType, List<Course>> coursesCollection;
+    private List<CourseType> groupList;
     Course clickedCourse;
-    public ExpandableListAdapter(Activity context,List<String> groupList,
-                                 Map<String, List<Course>> coursesCollection) {
+    public ExpandableListAdapter(Activity context,List<CourseType> groupList,
+                                 Map<CourseType, List<Course>> coursesCollection) {
         this.context = context;
         this.groupList = groupList;
         this.coursesCollection = coursesCollection;
@@ -77,7 +79,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded,
                              View convertView, ViewGroup parent) {
-        String courseName = (String) getGroup(groupPosition);
+        CourseType courseName = (CourseType) getGroup(groupPosition);
         if (convertView == null) {
             LayoutInflater infalInflater = (LayoutInflater) context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -86,7 +88,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         }
         TextView item = (TextView) convertView.findViewById(R.id.courses);
         item.setTypeface(null, Typeface.BOLD);
-        item.setText(courseName);
+        item.setText(courseName.toString());
         return convertView;
     }
 
@@ -105,10 +107,21 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
         holder.name.setText(c.getName());
-        holder.image.setImageResource(c.getImageId());
+        try {
+            holder.image.setImageBitmap(MediaStore.Images.Media.getBitmap(context.getContentResolver(), c.getImage()));
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
         holder.add.setImageResource(R.drawable.ic_add);
-        Bitmap icon = BitmapFactory.decodeResource(context.getResources(), c.getImageId());
-        holder.name.setBackgroundColor(getDominantColor(icon));
+       // Bitmap icon = BitmapFactory.decodeResource(context.getResources(), c.getImage().getGenerationId());
+        try {
+            Bitmap icon = MediaStore.Images.Media.getBitmap(context.getContentResolver(), c.getImage());
+            holder.name.setBackgroundColor(ExpandableListAdapter.getDominantColor(icon));
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
         holder.add.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
@@ -120,7 +133,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                 builder.setPositiveButton("Add",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                DataManager.getInstance().addCourse(clickedCourse);
+                                DataManager.getInstance(context).addCourse(clickedCourse);
                             }
                         });
                 builder.setNegativeButton("Back",

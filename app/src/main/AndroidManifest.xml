@@ -30,6 +30,7 @@
         <service
             android:name=".CoursesProgressService"
             android:exported="false" />
+        <activity android:name="com.example.yotam707.feedmeapp.DetailActivity" />
     </application>
 
 </manifest>

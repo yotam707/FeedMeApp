@@ -55,7 +55,8 @@ public class FeedMeListViewAdapter extends ArrayAdapter<Course> {
         Course c = courseList.get(position);
 
         Log.e("getViewData","progress:" + c.courseProgress+ "name:" + c.getName());
-        holder.image.setImageResource(c.getImageId());
+        holder.image.setImageURI(c.getImage());
+        //holder.image.setImageResource(c.getImage());
         holder.name.setText(c.getName());
         holder.pBar.setIndeterminate(false);
         holder.pBar.setMax(MAX*c.getStepsList().size());

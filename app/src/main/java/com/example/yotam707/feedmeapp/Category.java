@@ -9,7 +9,7 @@ public class Category implements Comparable<Category> {
 
 
     public int getId() {
-        return id;
+        return this.id;
     }
 
     public void setId(int id) {

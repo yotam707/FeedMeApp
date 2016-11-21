@@ -43,4 +43,10 @@ public class GenQueue<E> {
         return list.getFirst();
     }
 
+    public void clear(){
+        if(getSize() > 0)
+            list.clear();
+    }
+
+
 }

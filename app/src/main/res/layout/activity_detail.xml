@@ -100,8 +100,11 @@
             android:id="@+id/tabs"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:background="@color/colorPrimary"
-            app:tabIndicatorColor="@color/colorPrimaryDark"
+            android:layout_below="@+id/toolbar"
+            android:background="@color/colorLightGrey"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:tabIndicatorColor="@android:color/background_dark"
             />
 
             <android.support.v4.view.ViewPager

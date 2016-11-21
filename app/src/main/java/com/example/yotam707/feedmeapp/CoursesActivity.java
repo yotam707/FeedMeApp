@@ -20,7 +20,7 @@ public class CoursesActivity extends AppCompatActivity {
     List<String> groupList;
     ExpandableListView expListView;
     ListView listView;
-    ListViewAdapter adapter;
+    CourseListViewAdapter adapter;
     final String TAG = CoursesActivity.class.getSimpleName();
 
 
@@ -50,7 +50,7 @@ public class CoursesActivity extends AppCompatActivity {
 
         expListView = (ExpandableListView) findViewById(R.id.courses_list);
         final ExpandableListAdapter expListAdapter = new ExpandableListAdapter(
-                this, DataManager.getInstance().getGroupList(), DataManager.getInstance().getCoursesCollection());
+                this, DataManager.getInstance(getApplicationContext()).getGroupList(), DataManager.getInstance(getApplicationContext()).getCoursesCollection());
         expListView.setAdapter(expListAdapter);
 
         expListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
@@ -74,7 +74,7 @@ public class CoursesActivity extends AppCompatActivity {
 
 
     private void setListViewAdapter(){
-        adapter = new ListViewAdapter(this,R.layout.item_listview, DataManager.getInstance().getCourses());
+        adapter = new CourseListViewAdapter(this,R.layout.item_listview, DataManager.getInstance(getApplicationContext()).getCourses());
         listView.setAdapter(adapter);
     }
 

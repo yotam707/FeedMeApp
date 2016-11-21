@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +16,7 @@ import android.widget.TextView;
 
 import com.example.yotam707.feedmeapp.data.DataManager;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -38,7 +41,13 @@ public class EditListViewAdapter extends ArrayAdapter<Course> {
         }
         Course c = coursesAdded.get(position);
 
-        holder.image.setImageResource(c.getImageId());
+        try {
+            Bitmap m = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), c.getImage());
+            holder.image.setImageBitmap(m);
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
         holder.name.setText(c.getName());
         holder.remove.setImageResource(android.R.drawable.ic_delete);
         holder.remove.setOnClickListener(new View.OnClickListener() {
@@ -52,7 +61,7 @@ public class EditListViewAdapter extends ArrayAdapter<Course> {
                 builder.setPositiveButton("Remove",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                DataManager.getInstance().removeCourse(clickedCourse);
+                                DataManager.getInstance(getContext()).removeCourse(clickedCourse);
                                 notifyDataSetChanged();
                             }
                         });

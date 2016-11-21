@@ -5,7 +5,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -35,8 +34,8 @@ public class CoursesProgressService extends IntentService {
 
     @Override
     public void onCreate() {
-        courses = DataManager.getInstance().getQueueAddedCourses();
-        coursesList = DataManager.getInstance().getListAddedCourses();
+        courses = DataManager.getInstance(getApplicationContext()).getQueueAddedCourses();
+        coursesList = DataManager.getInstance(getApplicationContext()).getListAddedCourses();
         manager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
         super.onCreate();
 
@@ -73,10 +72,8 @@ public class CoursesProgressService extends IntentService {
                 Steps currentStep = currentCourse.getCurrentStep();
                 if(currentStep != null){
                     if(currentStep.currentProgress == 0 && !currentStep.wasNotificationSent){
-                        if(!currentStep.wasNotificationSent){
-                            sendNotification(currentCourse.getName(), currentStep.getDescription());
-                            currentStep.wasNotificationSent = true;
-                        }
+                        sendNotification(currentCourse.getName(), currentStep.getDescription());
+                        currentStep.wasNotificationSent = true;
                     }
                     if(!currentCourse.isFinished(currentStep)) {
                         Log.e("current Course", "name:" + currentCourse.getName());
@@ -84,7 +81,7 @@ public class CoursesProgressService extends IntentService {
                             Log.e("current Step", "number:" + currentStep.getStepNum());
                             currentCourse.getCourseProgress(currentStep);
                             int courseProgress = currentStep.currentProgress;
-                            if (currentCourse.maxStepsTime == courseProgress) {
+                            if (currentCourse.maxStepsTime == currentCourse.courseProgress) {
                                 courses.remove(currentCourse);
                             }
                             Log.e("progress service data", "name:" + currentCourse.getName() + " progress:" + courseProgress);
@@ -115,7 +112,7 @@ public class CoursesProgressService extends IntentService {
         }
     }
     public void sendNotification(String title, String text){
-        int uniqueId = (int)System.currentTimeMillis();
+        int uniqueId = ((int)System.nanoTime()/100000);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext())
                 .setSmallIcon(R.drawable.feed_me_logo)
                 .setContentTitle(title)
