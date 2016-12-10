@@ -52,7 +52,7 @@ public class DetailActivity extends AppCompatActivity implements NavigationView.
         db = new DatabaseHandler(getApplicationContext());
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar1);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         drawer = (DrawerLayout) findViewById(R.id.drawerLayout);
         setSupportActionBar(toolbar);

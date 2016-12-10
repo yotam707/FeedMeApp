@@ -119,9 +119,9 @@ public class CoursesProgressService extends IntentService {
     public void sendNotification(String title, String text){
         int uniqueId = ((int)System.nanoTime()/100000);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext())
-                .setSmallIcon(R.drawable.feed_me_logo)
+                .setSmallIcon(R.drawable.Feed_Me)
                 .setLargeIcon(BitmapFactory.decodeResource(this.getResources(),
-                        R.drawable.feed_me_logo))
+                        R.drawable.Feed_Me))
                 .setContentTitle(title)
                 .setContentText(text);
         Intent notificationIntent = new Intent(getApplicationContext(),CoursesProgressService.class);
