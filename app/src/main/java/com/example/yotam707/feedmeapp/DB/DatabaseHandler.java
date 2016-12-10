@@ -54,6 +54,19 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String KEY_TIME_IN_SECONDS = "time_in_seconds";
     private static final String KEY_QUANTITY = "quantity";
 
+    private static DatabaseHandler sInstance;
+
+    public static synchronized DatabaseHandler getInstance(Context context) {
+
+        // Use the application context, which will ensure that you
+        // don't accidentally leak an Activity's context.
+        // See this article for more information: http://bit.ly/6LRzfx
+        if (sInstance == null) {
+            sInstance = new DatabaseHandler(context.getApplicationContext());
+        }
+        return sInstance;
+    }
+
     public DatabaseHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -218,8 +231,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         // looping through all rows and adding to list
         if (c.moveToFirst()) {
             do {
-                Steps step = new Steps(c.getInt(c.getColumnIndex(KEY_COURSE_ID)), c.getInt(c.getColumnIndex(KEY_STEPS_NUM)),
+                Steps step = new Steps(c.getInt(c.getColumnIndex(KEY_STEPS_NUM)),
                         c.getInt(c.getColumnIndex(KEY_TIME_IN_SECONDS)),c.getString(c.getColumnIndex(KEY_DESCRIPTION)));
+                step.setCourseId(c.getInt(c.getColumnIndex(KEY_COURSE_ID)));
                 steps.add(step);
             } while (c.moveToNext());
         }
@@ -238,8 +252,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         // looping through all rows and adding to list
         if (c.moveToFirst()) {
             do {
-                Ingredient ingredient = new Ingredient(c.getInt(c.getColumnIndex(KEY_COURSE_ID)), c.getInt(c.getColumnIndex(KEY_INGREDIENT_ID)),
+                Ingredient ingredient = new Ingredient(c.getInt(c.getColumnIndex(KEY_INGREDIENT_ID)),
                         c.getString(c.getColumnIndex(KEY_NAME)),c.getInt(c.getColumnIndex(KEY_QUANTITY)));
+                ingredient.setCourseId(c.getInt(c.getColumnIndex(KEY_COURSE_ID)));
                 ingredients.add(ingredient);
             } while (c.moveToNext());
         }

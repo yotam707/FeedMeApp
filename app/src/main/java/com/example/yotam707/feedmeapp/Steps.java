@@ -22,8 +22,7 @@ public class Steps {
     private static final int MAX = 100;
 
 
-    public Steps(int courseId, int stepNum, int timeImSeconds, String description){
-        this.courseId = courseId;
+    public Steps( int stepNum, int timeImSeconds, String description){
         this.stepNum = stepNum;
         this.timeInmSeconds = timeImSeconds;
         this.description = description;

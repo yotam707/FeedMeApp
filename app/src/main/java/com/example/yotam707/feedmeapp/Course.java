@@ -145,7 +145,7 @@ public class Course {
         this.stepsGenQueue = new GenQueue<Steps>();
         for(Steps s: stepsList){
             s.currentStep = false;
-                Steps temp = new Steps(this.id,s.stepNum,s.timeInmSeconds,s.description);
+                Steps temp = new Steps(s.stepNum,s.timeInmSeconds,s.description);
             this.stepsGenQueue.enqueue(temp);
         }
         this.stepsTotalTime = getStepsTotalTime();

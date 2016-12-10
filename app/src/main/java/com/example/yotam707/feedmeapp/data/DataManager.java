@@ -151,15 +151,15 @@ public class DataManager {
         stepsGenQueue = new GenQueue<Steps>();
         stepsList = new ArrayList<Steps>();
         for (int i=1; i<3; i++){
-            stepsGenQueue.enqueue(new Steps(i,i,5000,"this is step " +i));
-            stepsList.add(new Steps(i, i,5000,"this is step " +i));
+            stepsGenQueue.enqueue(new Steps(i,5000,"this is step " +i));
+            stepsList.add(new Steps(i,5000,"this is step " +i));
         }
     }
 
     private void createIngredientList(){
         ingredientList = new ArrayList<Ingredient>();
         for(int i=0;i<7; i++){
-            ingredientList.add(new Ingredient(i, i+1,"Ingredient " + i+1,i+3));
+            ingredientList.add(new Ingredient(i+1,"Ingredient " + i+1,i+3));
         }
 
     }
@@ -218,11 +218,14 @@ public class DataManager {
 //                new Course(3,R.drawable.rice, "Hash Brown",categoriesList.get(1), "Description 3", new ArrayList<>(stepsList), ingredientList)};
 
         for (int i = 0; i < firstsCourse.length ; i++) {
+
             dbHandler.addCourse(firstsCourse[i]);
             for (int j = 0; j < firstsCourse[i].getStepsList().size(); j++) {
+                firstsCourse[i].getStepsList().get(j).setCourseId(firstsCourse[i].getId());
                 dbHandler.addStep(firstsCourse[i].getStepsList().get(j));
             }
             for (int j = 0; j < firstsCourse[i].getIngredientList().size(); j++) {
+                firstsCourse[i].getIngredientList().get(j).setCourseId(firstsCourse[i].getId());
                 dbHandler.addIngredient(firstsCourse[i].getIngredientList().get(j));
             }
         }
@@ -240,9 +243,11 @@ public class DataManager {
         for (int i = 0; i < mainCourses.length ; i++) {
             dbHandler.addCourse(mainCourses[i]);
             for (int j = 0; j < mainCourses[i].getStepsList().size(); j++) {
+                mainCourses[i].getStepsList().get(j).setCourseId(mainCourses[i].getId());
                 dbHandler.addStep(mainCourses[i].getStepsList().get(j));
             }
             for (int j = 0; j < mainCourses[i].getIngredientList().size(); j++) {
+                mainCourses[i].getIngredientList().get(j).setCourseId(mainCourses[i].getId());
                 dbHandler.addIngredient(mainCourses[i].getIngredientList().get(j));
             }
         }
@@ -257,9 +262,11 @@ public class DataManager {
         for (int i = 0; i < desertCourses.length ; i++) {
             dbHandler.addCourse(desertCourses[i]);
             for (int j = 0; j < desertCourses[i].getStepsList().size(); j++) {
+                desertCourses[i].getStepsList().get(j).setCourseId(desertCourses[i].getId());
                 dbHandler.addStep(desertCourses[i].getStepsList().get(j));
             }
             for (int j = 0; j < desertCourses[i].getIngredientList().size(); j++) {
+                desertCourses[i].getIngredientList().get(j).setCourseId(desertCourses[i].getId());
                 dbHandler.addIngredient(desertCourses[i].getIngredientList().get(j));
 
             }
