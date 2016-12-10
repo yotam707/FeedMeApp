@@ -61,15 +61,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-        db.close();
-        //db.remover
-
         String CREATE_COURSES_TABLE = "CREATE TABLE " + TABLE_COURSES + "("
         + KEY_COURSE_ID + " INTEGER PRIMARY KEY," + KEY_TYPE + " TEXT,"
         + KEY_CATEGORY + " TEXT," + KEY_IMAGE + " TEXT," + KEY_NAME + " TEXT," + KEY_DESCRIPTION + " TEXT" + ")";
 
         String CREATE_CATEGORIES_TABLE = "CREATE TABLE " + TABLE_CATEGORIES + "("
-                + KEY_CATEGORY_ID + " INTEGER PRIMARY KEY," + KEY_NAME + " TEXT" + ")";
+                + KEY_CATEGORY_ID + " INTEGER," + KEY_NAME + " TEXT" + ")";
 
         String CREATE_STEPS_TABLE = "CREATE TABLE " + TABLE_STEPS + "("
                 + KEY_STEPS_NUM + " INTEGER," + KEY_TIME_IN_SECONDS + " INTEGER,"
@@ -98,7 +95,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
 
-    // Getting one shop
+
+    public void clearDb(){
+        clearDatabase(TABLE_COURSES);
+        clearDatabase(TABLE_CATEGORIES);
+        clearDatabase(TABLE_STEPS);
+        clearDatabase(TABLE_INGREDIENTS);
+
+    }
+
     public Course getCourse(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(TABLE_COURSES, new String[] {KEY_COURSE_ID,
@@ -116,17 +121,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return course;
     }
 
-    public void clearDb(){
-        clearDatabase(TABLE_COURSES);
-        clearDatabase(TABLE_CATEGORIES);
-        clearDatabase(TABLE_STEPS);
-        clearDatabase(TABLE_INGREDIENTS);
-
-    }
     public void clearDatabase(String TABLE_NAME) {
         SQLiteDatabase db = this.getWritableDatabase();
         String clearDBQuery = "DELETE FROM "+TABLE_NAME;
         db.execSQL(clearDBQuery);
+        db.close();
     }
     public List<Course> getAllCourses() {
         List<Course> coursesList = new ArrayList<Course>();
@@ -153,7 +152,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
 
-// return contact list
+        db.close();
         return coursesList;
     }
     // Adding new shop

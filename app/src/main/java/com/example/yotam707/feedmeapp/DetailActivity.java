@@ -20,7 +20,11 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import java.io.IOException;
@@ -39,8 +43,8 @@ public class DetailActivity extends AppCompatActivity implements NavigationView.
     private TextView mHeaderTitle;
     private DatabaseHandler db;
     private DrawerLayout drawer;
-    private TabLayout tabs;
-    private String[] pageTitle = {"Ingredients", "Steps"};
+    private ListView ingredientList;
+    private ListView stepsList;
     private ViewPager viewPager;
     Course selectedCourse;
     @Override
@@ -52,7 +56,7 @@ public class DetailActivity extends AppCompatActivity implements NavigationView.
         setSupportActionBar(toolbar);
         drawer = (DrawerLayout) findViewById(R.id.drawerLayout);
         setSupportActionBar(toolbar);
-        viewPager = (ViewPager)findViewById(R.id.view_pager);
+        viewPager = (ViewPager)findViewById(R.id.view_pager1);
         //create default navigation drawer toggle
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -61,11 +65,6 @@ public class DetailActivity extends AppCompatActivity implements NavigationView.
 
         mHeaderImageView = (ImageView) findViewById(R.id.imgHeader);
         mHeaderTitle = (TextView) findViewById(R.id.courseNameHeader);
-        tabs = (TabLayout) findViewById(R.id.tabs);
-        for (int i = 0; i < 2; i++) {
-            tabs.addTab(tabs.newTab().setText(pageTitle[i]));
-        }
-        tabs.setTabGravity(TabLayout.GRAVITY_FILL);
 
         String image_path = getIntent().getStringExtra("imagePath");
         selectedCourse = db.getCourseByImage(Uri.parse(image_path));
@@ -74,41 +73,26 @@ public class DetailActivity extends AppCompatActivity implements NavigationView.
         try {
             icon = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(), Uri.parse(image_path));
             mHeaderImageView.setImageBitmap(icon);
-            //tabs.setBackgroundColor(getDominantColor2(icon));
 
         } catch (IOException e) {
             e.printStackTrace();
         }
         mHeaderTitle.setBackgroundColor(ExpandableListAdapter.getDominantColor(icon));
+
+        ingredientList = (ListView) findViewById(R.id.ingredient_list);
+        ingredientList.setAdapter(new IngredientsListAdapter(getApplicationContext(),selectedCourse));
+
+        stepsList = (ListView) findViewById(R.id.steps_list);
+        stepsList.setAdapter(new StepsListAdapter(getApplicationContext(),selectedCourse));
+
+        ListUtils.setDynamicHeight(ingredientList);
+        ListUtils.setDynamicHeight(stepsList);
+
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         DataManager.getInstance(getApplicationContext()).createNavigationMenu(navigationView);
         assert navigationView != null;
         navigationView.setNavigationItemSelectedListener(this);
 
-        //set viewpager adapter
-        ViewPagerAdapterCourse pagerAdapter = new ViewPagerAdapterCourse(getSupportFragmentManager());
-        viewPager.setAdapter(pagerAdapter);
-
-        //change Tab selection when swipe ViewPager
-        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabs));
-
-        //change ViewPager page when tab selected
-        tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                viewPager.setCurrentItem(tab.getPosition());
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });
 
 
     }
@@ -185,5 +169,26 @@ public class DetailActivity extends AppCompatActivity implements NavigationView.
 
     public Course getSelectedCourse(){
         return selectedCourse;
+    }
+}
+
+ class ListUtils {
+    public static void setDynamicHeight(ListView mListView) {
+        ListAdapter mListAdapter = mListView.getAdapter();
+        if (mListAdapter == null) {
+            // when adapter is null
+            return;
+        }
+        int height = 0;
+        int desiredWidth = View.MeasureSpec.makeMeasureSpec(mListView.getWidth(), View.MeasureSpec.UNSPECIFIED);
+        for (int i = 0; i < mListAdapter.getCount(); i++) {
+            View listItem = mListAdapter.getView(i, null, mListView);
+            listItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+            height += listItem.getMeasuredHeight();
+        }
+        ViewGroup.LayoutParams params = mListView.getLayoutParams();
+        params.height = height + (mListView.getDividerHeight() * (mListAdapter.getCount() - 1));
+        mListView.setLayoutParams(params);
+        mListView.requestLayout();
     }
 }

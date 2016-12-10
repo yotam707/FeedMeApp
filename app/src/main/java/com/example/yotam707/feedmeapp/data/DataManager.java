@@ -191,7 +191,6 @@ public class DataManager {
             int i=0;
             if (type == CourseType.FIRST) {
                 loadChild(firstsCourse);
-                System.out.println("I'm Here");
             } else if (type == CourseType.MAIN)
                loadChild(mainCourses);
             else
