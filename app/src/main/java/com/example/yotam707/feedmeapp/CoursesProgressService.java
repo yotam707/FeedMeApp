@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -22,6 +23,7 @@ public class CoursesProgressService extends IntentService {
     public static final String INTENT_COURSE_PROGRESS = "com.example.yotam707.feedmeapp.extra.INTENT_COURSE_PROGRESS";
     public static final String INTENT_COURSE_PROGRESS_VALUE = "com.example.yotam707.feedmeapp.extra.INTENT_COURSE_PROGRESS_VALUE";
     public static final String INTENT_COURSE_ID = "com.example.yotam707.feedmeapp.extra.INTENT_COURSE_ID";
+    public static final String INTENT_IS_FINISH = "com.example.yotam707.feedmeapp.extra.INTENT_IS_FINISH";
     LocalBroadcastManager broadcaster;
     private GenQueue<Course> courses;
     private List<Course> coursesList;
@@ -97,15 +99,18 @@ public class CoursesProgressService extends IntentService {
                 }
             }
             if (!allFinished) {
-                Toast.makeText(this, "all finished is false", Toast.LENGTH_LONG)
-                        .show();
+                //Toast.makeText(this, "all finished is false", Toast.LENGTH_LONG)
+                        //.show();
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
                 }
                 CoursesProgressService.startActionCoursesProgress(this.getApplicationContext());
             }
-            Toast.makeText(this, "all finished is true", Toast.LENGTH_LONG);
+            else{
+                this.sendCourseProgress(0, 0);
+            }
+
         }
         catch(Exception ex){
             Log.e("CourseProgressService", ex.getMessage());
@@ -115,6 +120,8 @@ public class CoursesProgressService extends IntentService {
         int uniqueId = ((int)System.nanoTime()/100000);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext())
                 .setSmallIcon(R.drawable.feed_me_logo)
+                .setLargeIcon(BitmapFactory.decodeResource(this.getResources(),
+                        R.drawable.feed_me_logo))
                 .setContentTitle(title)
                 .setContentText(text);
         Intent notificationIntent = new Intent(getApplicationContext(),CoursesProgressService.class);

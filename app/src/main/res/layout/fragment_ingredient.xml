@@ -9,7 +9,9 @@
     <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/ingredient_frag_lv" >
+        android:id="@+id/ingredient_frag_lv"
+        android:listSelector="@android:color/transparent"
+        android:divider="@null">
 
     </ListView>
 

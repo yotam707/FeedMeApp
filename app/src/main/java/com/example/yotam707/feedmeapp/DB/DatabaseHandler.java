@@ -53,6 +53,18 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String KEY_STEPS_NUM = "steps_num";
     private static final String KEY_TIME_IN_SECONDS = "time_in_seconds";
     private static final String KEY_QUANTITY = "quantity";
+    private static DatabaseHandler sInstance;
+
+    public static synchronized DatabaseHandler getInstance(Context context) {
+
+        // Use the application context, which will ensure that you
+        // don't accidentally leak an Activity's context.
+        // See this article for more information: http://bit.ly/6LRzfx
+        if (sInstance == null) {
+            sInstance = new DatabaseHandler(context.getApplicationContext());
+        }
+        return sInstance;
+    }
 
     public DatabaseHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -61,7 +73,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-        db.close();
+        //db.close();
         //db.remover
 
         String CREATE_COURSES_TABLE = "CREATE TABLE " + TABLE_COURSES + "("

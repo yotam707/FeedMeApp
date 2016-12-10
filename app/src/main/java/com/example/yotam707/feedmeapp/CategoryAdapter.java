@@ -39,6 +39,7 @@ public class CategoryAdapter extends ArrayAdapter<Category> {
         view.setTextColor(Color.BLACK);
         view.setGravity(Gravity.CENTER);
         view.setText(catList.get(position).getName());
+        view.setTextSize(25);
 
         return view;
     }
@@ -48,7 +49,8 @@ public class CategoryAdapter extends ArrayAdapter<Category> {
             TextView view = new TextView(context);
             view.setTextColor(Color.BLACK);
             view.setText(catList.get(position).getName());
-            view.setHeight(60);
+            view.setHeight(100);
+            view.setTextSize(25);
 
             return view;
     }

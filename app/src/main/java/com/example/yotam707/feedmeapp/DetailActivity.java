@@ -48,11 +48,11 @@ public class DetailActivity extends AppCompatActivity implements NavigationView.
         db = new DatabaseHandler(getApplicationContext());
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar1);
         setSupportActionBar(toolbar);
         drawer = (DrawerLayout) findViewById(R.id.drawerLayout);
         setSupportActionBar(toolbar);
-        viewPager = (ViewPager)findViewById(R.id.view_pager);
+        viewPager = (ViewPager)findViewById(R.id.view_pager1);
         //create default navigation drawer toggle
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -74,7 +74,6 @@ public class DetailActivity extends AppCompatActivity implements NavigationView.
         try {
             icon = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(), Uri.parse(image_path));
             mHeaderImageView.setImageBitmap(icon);
-            //tabs.setBackgroundColor(getDominantColor2(icon));
 
         } catch (IOException e) {
             e.printStackTrace();

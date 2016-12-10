@@ -28,7 +28,7 @@ public class MainCourseActivity extends AppCompatActivity implements NavigationV
     private ViewPager viewPager;
     private DrawerLayout drawer;
     private TabLayout tabLayout;
-    private String[] pageTitle = {"TOP", "CATEGORIES"};
+    private String[] pageTitle = {"TOP COURSES", "CATEGORIES"};
     private Menu menuAddedItem;
 
 

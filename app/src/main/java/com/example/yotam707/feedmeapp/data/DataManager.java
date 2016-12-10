@@ -31,7 +31,7 @@ public class DataManager {
     Context ctx;
 	List<CourseType> groupList;
     private GenQueue<Course> coursesToAdd;
-    private List<Course> coursesToAddList;
+     List<Course> coursesToAddList;
     private Map<CourseType, List<Course>> coursesCollection;
     //private List<String> groupList;
     private List<Category> categoriesList;
@@ -75,6 +75,17 @@ public class DataManager {
         addedItemsMenu = navigationView.getMenu();
         subMenu = addedItemsMenu.addSubMenu("Added Items");
 
+    }
+
+    public void setAddedCoursesToSubMenu(){
+        for(Course c : coursesToAddList){
+            subMenu.add(c.getName());
+        }
+    }
+
+    public void clearAddedCourse(){
+        coursesToAdd.clear();
+        coursesToAddList.clear();
     }
     public void addCourse(Course c){
         //Course addedC = new Course(c.id, c.imageId, c.name,c.category, c.description, c.stepsList,c.ingredientList);
@@ -209,9 +220,6 @@ public class DataManager {
                 new Course(2,CourseType.FIRST,R.drawable.eggplant,dbHandler.getImageUri(R.drawable.eggplant), "EggPlant",1,categoriesList.get(1).getName(), "Description 2", new ArrayList<>(stepsList), new ArrayList<>(ingredientList)),
                 new Course(3,CourseType.FIRST,R.drawable.hasbrownies,dbHandler.getImageUri(R.drawable.hasbrownies), "Hash Brown",1,categoriesList.get(1).getName(), "Description 3", new ArrayList<>(stepsList), new ArrayList<>(ingredientList))};
 
-//        Course[] firstsCourse = {new Course(1,R.drawable.rice, "Salad",categoriesList.get(1), "Description 1", new ArrayList<>(stepsList), ingredientList),
-//                new Course(2,R.drawable.rice, "EggPlant",categoriesList.get(1), "Description 2", new ArrayList<>(stepsList), ingredientList),
-//                new Course(3,R.drawable.rice, "Hash Brown",categoriesList.get(1), "Description 3", new ArrayList<>(stepsList), ingredientList)};
 
         for (int i = 0; i < firstsCourse.length ; i++) {
             dbHandler.addCourse(firstsCourse[i]);
@@ -227,10 +235,6 @@ public class DataManager {
             dbHandler.addCategory(categoriesList.get(x));
         }
 
-//        Course[] mainCourses = { new Course(4,R.drawable.rice, "Tomato Pasta",categoriesList.get(2), "Description 4", new ArrayList<>(stepsList), ingredientList),
-//                new Course(5,R.drawable.rice, "Omelet",categoriesList.get(2), "Description 5", new ArrayList<>(stepsList), ingredientList),
-//                new Course(6,R.drawable.rice, "Fish",categoriesList.get(2), "Description 6", new ArrayList<>(stepsList), ingredientList)};
-
         Course[] mainCourses = { new Course(4,CourseType.MAIN,R.drawable.tomatopasta,dbHandler.getImageUri(R.drawable.tomatopasta), "Tomato Pasta",2,categoriesList.get(2).getName(), "Description 4", new ArrayList<>(stepsList), new ArrayList<>(ingredientList)),
                 new Course(5,CourseType.MAIN,R.drawable.omlette,dbHandler.getImageUri(R.drawable.omlette), "Omelet",2,categoriesList.get(2).getName(), "Description 5", new ArrayList<>(stepsList), new ArrayList<>(ingredientList)),
                 new Course(6,CourseType.MAIN,R.drawable.fish,dbHandler.getImageUri(R.drawable.fish), "Fish",2,categoriesList.get(2).getName(), "Description 6", new ArrayList<>(stepsList), new ArrayList<>(ingredientList))};
@@ -244,10 +248,6 @@ public class DataManager {
                 dbHandler.addIngredient(mainCourses[i].getIngredientList().get(j));
             }
         }
-//
-//        Course[] desertCourses = {  new Course(7,R.drawable.rice, "Chocolate Cake",categoriesList.get(3), "Description 7", new ArrayList<>(stepsList), ingredientList),
-//                new Course(8,R.drawable.rice, "Banana Roti",categoriesList.get(3), "Description 8", new ArrayList<>(stepsList), ingredientList)};
-//
 
         Course[] desertCourses = {  new Course(7,CourseType.DESSERT,R.drawable.chocolatecake,dbHandler.getImageUri(R.drawable.chocolatecake), "Chocolate Cake",3,categoriesList.get(3).getName(), "Description 7", new ArrayList<>(stepsList), new ArrayList<>(ingredientList)),
                 new Course(8,CourseType.DESSERT,R.drawable.bananaroti,dbHandler.getImageUri(R.drawable.bananaroti), "Banana Roti",3,categoriesList.get(3).getName(), "Description 8", new ArrayList<>(stepsList), new ArrayList<>(ingredientList))};

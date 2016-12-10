@@ -17,31 +17,62 @@ import java.util.List;
 
 public class IngredientsListAdapter extends ArrayAdapter<Ingredient> {
     private final Context context;
-    private final List<Ingredient> values;
+    //private final List<Ingredient> values;
+    Course clickedCourse;
 
-    public IngredientsListAdapter(Context context, List<Ingredient> values) {
-        super(context, R.layout.ingredient_list_item,values);
+    public IngredientsListAdapter(Context context, Course c) {
+        super(context, R.layout.ingredient_list_item);
+        this.clickedCourse = c;
         this.context = context;
-        this.values = values;
+        //this.values = values;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        LayoutInflater inflater = (LayoutInflater) context
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        View rowView = inflater.inflate(R.layout.ingredient_list_item, parent, false);
-        ImageView bullet = (ImageView) rowView.findViewById(R.id.imageView2);
-        TextView ingredientName = (TextView) rowView.findViewById(R.id.ingredient);
-        TextView ingredientQuantity = (TextView) rowView.findViewById(R.id.quantity);
-        ingredientName.setText(values.get(position).getName());
-        ingredientQuantity.setText(String.valueOf(values.get(position).getQuantity()));
-        // Change icon based on name
-        String s = ingredientName.getText().toString();
+        ViewHolder holder;
+        if(convertView == null){
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.ingredient_list_item,parent,false);
+            holder = new ViewHolder(convertView);
+            convertView.setTag(holder);
+        }
+        else{
+            holder = (ViewHolder)convertView.getTag();
+        }
 
-        System.out.println(s);
+        Ingredient ing = clickedCourse.getIngredientList().get(position);
+
+        holder.name.setText(ing.getName());
+        holder.quantity.setText(String.valueOf(ing.getQuantity()));
+        return convertView;
 
 
-        return rowView;
+
+//        LayoutInflater inflater = (LayoutInflater) context
+//                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//
+//        View rowView = inflater.inflate(R.layout.ingredient_list_item, parent, false);
+//        ImageView bullet = (ImageView) rowView.findViewById(R.id.imageView2);
+//        TextView ingredientName = (TextView) rowView.findViewById(R.id.ingredient);
+//        TextView ingredientQuantity = (TextView) rowView.findViewById(R.id.quantity);
+//        ingredientName.setText(values.get(position).getName());
+//        ingredientQuantity.setText(String.valueOf(values.get(position).getQuantity()));
+//        // Change icon based on name
+//        String s = ingredientName.getText().toString();
+//
+//        System.out.println(s);
+//
+//
+//        return rowView;
+    }
+
+    public class ViewHolder {
+        private TextView name;
+        private TextView quantity;
+
+        public ViewHolder(View v)  {
+            name = (TextView) v.findViewById(R.id.ingredient_frag_item);
+            quantity = (TextView) v.findViewById(R.id.quantity);
+        }
     }
 }
