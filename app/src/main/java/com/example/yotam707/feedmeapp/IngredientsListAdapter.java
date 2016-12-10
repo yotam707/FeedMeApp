@@ -24,7 +24,10 @@ public class IngredientsListAdapter extends ArrayAdapter<Ingredient> {
         super(context, R.layout.ingredient_list_item);
         this.clickedCourse = c;
         this.context = context;
-        //this.values = values;
+    }
+    @Override
+    public int getCount() {
+        return  clickedCourse.getIngredientList().size();
     }
 
     @Override
@@ -41,29 +44,13 @@ public class IngredientsListAdapter extends ArrayAdapter<Ingredient> {
         }
 
         Ingredient ing = clickedCourse.getIngredientList().get(position);
+        System.out.println(ing.getName());
 
         holder.name.setText(ing.getName());
         holder.quantity.setText(String.valueOf(ing.getQuantity()));
         return convertView;
 
 
-
-//        LayoutInflater inflater = (LayoutInflater) context
-//                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//
-//        View rowView = inflater.inflate(R.layout.ingredient_list_item, parent, false);
-//        ImageView bullet = (ImageView) rowView.findViewById(R.id.imageView2);
-//        TextView ingredientName = (TextView) rowView.findViewById(R.id.ingredient);
-//        TextView ingredientQuantity = (TextView) rowView.findViewById(R.id.quantity);
-//        ingredientName.setText(values.get(position).getName());
-//        ingredientQuantity.setText(String.valueOf(values.get(position).getQuantity()));
-//        // Change icon based on name
-//        String s = ingredientName.getText().toString();
-//
-//        System.out.println(s);
-//
-//
-//        return rowView;
     }
 
     public class ViewHolder {

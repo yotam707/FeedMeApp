@@ -53,18 +53,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String KEY_STEPS_NUM = "steps_num";
     private static final String KEY_TIME_IN_SECONDS = "time_in_seconds";
     private static final String KEY_QUANTITY = "quantity";
-    private static DatabaseHandler sInstance;
-
-    public static synchronized DatabaseHandler getInstance(Context context) {
-
-        // Use the application context, which will ensure that you
-        // don't accidentally leak an Activity's context.
-        // See this article for more information: http://bit.ly/6LRzfx
-        if (sInstance == null) {
-            sInstance = new DatabaseHandler(context.getApplicationContext());
-        }
-        return sInstance;
-    }
 
     public DatabaseHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -73,15 +61,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-        //db.close();
-        //db.remover
-
         String CREATE_COURSES_TABLE = "CREATE TABLE " + TABLE_COURSES + "("
         + KEY_COURSE_ID + " INTEGER PRIMARY KEY," + KEY_TYPE + " TEXT,"
         + KEY_CATEGORY + " TEXT," + KEY_IMAGE + " TEXT," + KEY_NAME + " TEXT," + KEY_DESCRIPTION + " TEXT" + ")";
 
         String CREATE_CATEGORIES_TABLE = "CREATE TABLE " + TABLE_CATEGORIES + "("
-                + KEY_CATEGORY_ID + " INTEGER PRIMARY KEY," + KEY_NAME + " TEXT" + ")";
+                + KEY_CATEGORY_ID + " INTEGER," + KEY_NAME + " TEXT" + ")";
 
         String CREATE_STEPS_TABLE = "CREATE TABLE " + TABLE_STEPS + "("
                 + KEY_STEPS_NUM + " INTEGER," + KEY_TIME_IN_SECONDS + " INTEGER,"
@@ -110,7 +95,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
 
-    // Getting one shop
+
+    public void clearDb(){
+        clearDatabase(TABLE_COURSES);
+        clearDatabase(TABLE_CATEGORIES);
+        clearDatabase(TABLE_STEPS);
+        clearDatabase(TABLE_INGREDIENTS);
+
+    }
+
     public Course getCourse(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(TABLE_COURSES, new String[] {KEY_COURSE_ID,
@@ -128,17 +121,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return course;
     }
 
-    public void clearDb(){
-        clearDatabase(TABLE_COURSES);
-        clearDatabase(TABLE_CATEGORIES);
-        clearDatabase(TABLE_STEPS);
-        clearDatabase(TABLE_INGREDIENTS);
-
-    }
     public void clearDatabase(String TABLE_NAME) {
         SQLiteDatabase db = this.getWritableDatabase();
         String clearDBQuery = "DELETE FROM "+TABLE_NAME;
         db.execSQL(clearDBQuery);
+        db.close();
     }
     public List<Course> getAllCourses() {
         List<Course> coursesList = new ArrayList<Course>();
@@ -165,7 +152,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
 
-// return contact list
+        db.close();
         return coursesList;
     }
     // Adding new shop
@@ -195,6 +182,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     public void addStep(Steps step) {
+        System.out.println("Step " + step.getStepNum() + " Add");
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(KEY_COURSE_ID, step.getCourseId());

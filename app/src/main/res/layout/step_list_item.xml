@@ -1,25 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_weight="2">
-    <TextView
-        android:layout_width="0dp"
-        android:layout_weight="0.3"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:layout_height="wrap_content"
-        android:id="@+id/step_num_item"
-        android:text="num."
-        android:paddingLeft="10dp"
-        android:textSize="15sp"/>
+    android:orientation="horizontal"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
 
     <TextView
-        android:layout_width="0dp"
-        android:layout_weight="1.5"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="202dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/step_num_item"
+        android:drawableLeft="@drawable/bullet"
+        android:drawablePadding="8dp"
+        android:padding="5dp"
+        android:textSize="20sp"
+        />
+
+
+    <TextView
+        android:layout_width="206dp"
         android:layout_height="wrap_content"
         android:id="@+id/step_desc_item"
-        android:text="num."
-        android:paddingLeft="10dp"
-        android:textSize="25sp"/>
+        android:text="Description"
+        android:padding="5dp"
+        android:textSize="20sp"/>
+
+    <TextView
+        android:layout_width="206dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/step_time_item"
+        android:text="Time"
+        android:padding="5dp"
+        android:textSize="20sp"/>
+
 </LinearLayout>
