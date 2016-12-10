@@ -191,6 +191,7 @@ public class DataManager {
             int i=0;
             if (type == CourseType.FIRST) {
                 loadChild(firstsCourse);
+
             } else if (type == CourseType.MAIN)
                loadChild(mainCourses);
             else
@@ -203,6 +204,10 @@ public class DataManager {
 
     private void initDb(Context ctx){
         dbHandler.clearDb();
+
+        for(int x = 1; x < categoriesList.size(); x++){
+            dbHandler.addCategory(categoriesList.get(x));
+        }
 
         Course[] firstsCourse = {new Course(1,CourseType.FIRST,R.drawable.salad,dbHandler.getImageUri(R.drawable.salad), "Salad",1,categoriesList.get(1).getName(), "Description 1", new ArrayList<>(stepsList), new ArrayList<>(ingredientList)),
                 new Course(2,CourseType.FIRST,R.drawable.eggplant,dbHandler.getImageUri(R.drawable.eggplant), "EggPlant",1,categoriesList.get(1).getName(), "Description 2", new ArrayList<>(stepsList), new ArrayList<>(ingredientList)),
@@ -222,9 +227,7 @@ public class DataManager {
             }
         }
 
-        for(int x = 1; x < categoriesList.size(); x++){
-            dbHandler.addCategory(categoriesList.get(x));
-        }
+
 
 //        Course[] mainCourses = { new Course(4,R.drawable.rice, "Tomato Pasta",categoriesList.get(2), "Description 4", new ArrayList<>(stepsList), ingredientList),
 //                new Course(5,R.drawable.rice, "Omelet",categoriesList.get(2), "Description 5", new ArrayList<>(stepsList), ingredientList),

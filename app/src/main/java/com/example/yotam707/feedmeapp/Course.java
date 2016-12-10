@@ -128,12 +128,13 @@ public class Course {
         this.name = name;
         this.description = description;
         this.stepsList = stepsList;
-        getStepsToQueue();
+     //   getStepsToQueue();
         this.ingredientList = ingredientList;
         this.category = new Category(categoryId,categoryName);
         this.courseProgress = 0;
         this.isCurrentCourse = false;
-        this.stepsTotalTime = getStepsTotalTime();
+//        this.stepsTotalTime = getStepsTotalTime();
+        this.stepsTotalTime = 0;
         this.stepsCount = stepsList.size();
         this.maxStepsTime = this.stepsCount*MAX;
         this.imageId = imageId;

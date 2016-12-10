@@ -182,6 +182,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     public void addStep(Steps step) {
+        System.out.println("Step " + step.getStepNum() + " Add");
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(KEY_COURSE_ID, step.getCourseId());
