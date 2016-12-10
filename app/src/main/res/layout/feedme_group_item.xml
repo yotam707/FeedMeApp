@@ -7,40 +7,44 @@
 
 
     <ImageView
-        android:layout_height="60dp"
-        android:layout_width="60dp"
+        android:layout_height="75dp"
+        android:layout_width="75dp"
         android:id="@+id/feed_me_courses_image"
         android:contentDescription="@string/app_name"
         android:src="@drawable/rice"
         />
 
     <LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <TextView
             android:id="@+id/feed_me_courses"
             android:layout_width="match_parent"
             android:layout_weight="1"
-            android:layout_height="wrap_content"
+            android:layout_height="30dp"
+            android:layout_marginBottom="10dp"
+            android:textSize="25sp"
             android:paddingLeft="10dp"
             android:text="test"
+            android:textStyle="normal|bold"
             />
 
         <ProgressBar
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-        android:paddingTop="40dp"
+            android:paddingTop="20dp"
             android:paddingLeft="20dp"
-        style="?android:progressBarStyleHorizontal"
-        android:id="@+id/main_progress_bar"
-        android:progress="50"
-        android:indeterminate="false"
-        android:max="100"/>
+            style="?android:progressBarStyleHorizontal"
+            android:id="@+id/main_progress_bar"
+            android:progress="50"
+            android:indeterminate="false"
+            android:max="100"
+            android:theme="@style/LinearProgress"/>
 
-</LinearLayout>
+    </LinearLayout>
 
 
 </LinearLayout>
