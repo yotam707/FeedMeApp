@@ -36,6 +36,7 @@ public class MainCourseActivity extends AppCompatActivity implements NavigationV
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        DataManager.initInstance(this);
         setContentView(R.layout.activity_main_course);
 
         viewPager = (ViewPager)findViewById(R.id.view_pager);

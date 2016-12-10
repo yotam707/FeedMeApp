@@ -54,7 +54,10 @@ public class Course {
     }
 
     public void setStepsList(List<Steps> stepsList) {
+        this.stepsCount = stepsList.size();
+        this.maxStepsTime = this.stepsCount*MAX;
         this.stepsList = stepsList;
+        getStepsToQueue();
     }
 
     public void setIngredientList(List<Ingredient> ingredientList) {
@@ -127,16 +130,10 @@ public class Course {
         this.image = image;
         this.name = name;
         this.description = description;
-        this.stepsList = stepsList;
-     //   getStepsToQueue();
-        this.ingredientList = ingredientList;
         this.category = new Category(categoryId,categoryName);
         this.courseProgress = 0;
         this.isCurrentCourse = false;
-//        this.stepsTotalTime = getStepsTotalTime();
         this.stepsTotalTime = 0;
-        this.stepsCount = stepsList.size();
-        this.maxStepsTime = this.stepsCount*MAX;
         this.imageId = imageId;
 
     }

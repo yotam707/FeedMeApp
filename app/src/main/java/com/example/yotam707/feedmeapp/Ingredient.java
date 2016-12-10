@@ -15,6 +15,13 @@ public class Ingredient {
         this.quantity = quantity;
     }
 
+    public Ingredient(int courseId, int ingredientId, String name, int quantity) {
+        this.courseId = courseId;
+        this.ingredientId = ingredientId;
+        this.name = name;
+        this.quantity = quantity;
+    }
+
     public int getCourseId() {
         return courseId;
     }

@@ -67,7 +67,8 @@ public class DetailActivity extends AppCompatActivity implements NavigationView.
         mHeaderTitle = (TextView) findViewById(R.id.courseNameHeader);
 
         String image_path = getIntent().getStringExtra("imagePath");
-        selectedCourse = db.getCourseByImage(Uri.parse(image_path));
+        selectedCourse = DataManager.getInstance(this).findCourseByImage(Uri.parse(image_path));
+        //selectedCourse = db.getCourseByImage(Uri.parse(image_path));
         mHeaderTitle.setText(selectedCourse.getName());
         Bitmap icon = null;
         try {

@@ -36,6 +36,22 @@ public class Steps {
         this.wasNotificationSent = false;
 
     }
+
+    public Steps(int courseId, int stepNum, int timeImSeconds, String description){
+        this.courseId =courseId;
+        this.stepNum = stepNum;
+        this.timeInmSeconds = timeImSeconds;
+        this.description = description;
+        this.mProgress = 0;
+        this.finished = false;
+        this.currentStep = false;
+        this.startTime = -1;
+        this.currentTime = 0;
+        this.calculatedTime = 0;
+        this.currentProgress = 0;
+        this.wasNotificationSent = false;
+
+    }
     public int getCourseId() {
         return courseId;
     }
