@@ -42,6 +42,7 @@ public class DataManager {
     private Menu addedItemsMenu;
     private SubMenu subMenu;
     private static final String DATABASE_NAME = "FeedMeDB";
+    public static boolean wasInit = false;
 
 
     public static DataManager getInstance(Context ctx){
@@ -52,7 +53,11 @@ public class DataManager {
     }
 
     public static void initInstance(Context ctx){
-        mInstance = new DataManager(ctx);
+        if(!wasInit){
+            mInstance = new DataManager(ctx);
+            wasInit = true;
+        }
+
     }
 
     private DataManager(Context ctx) {
