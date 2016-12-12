@@ -119,7 +119,7 @@ public class CoursesProgressService extends IntentService {
     public void sendNotification(String title, String text){
         int uniqueId = ((int)System.nanoTime()/100000);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext())
-                .setSmallIcon(R.drawable.feed_me_status)
+                .setSmallIcon(R.drawable.status_bar_logo)
                 .setLargeIcon(BitmapFactory.decodeResource(this.getResources(),
                         R.drawable.feed_me))
                 .setContentTitle(title)
