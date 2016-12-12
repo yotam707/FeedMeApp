@@ -59,7 +59,6 @@ public class FeedMeActivity extends AppCompatActivity implements NavigationView.
         assert navigationView != null;
         navigationView.setNavigationItemSelectedListener(this);
         coursesList = DataManager.getInstance(getApplicationContext()).getListAddedCourses();
-        //coursesList = DataManager.getInstance().getListAddedCourses();
         Log.e("FeedMeActivity", "onCreate: coursesList: "+coursesList.size());
         coursesListView = (ListView)findViewById(R.id.feed_me_courses_list);
         coursesListViewAdapter = new FeedMeListViewAdapter(this,R.layout.feedme_group_item ,coursesList);

@@ -104,6 +104,7 @@ public class DataManager {
     public void clearAddedCourse(){
         coursesToAdd.clear();
         coursesToAddList.clear();
+        subMenu.clear();
     }
     public void addCourse(Course c){
         c.setStepsList(createStepsList(c.getId()));
