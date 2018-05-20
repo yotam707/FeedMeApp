@@ -23,6 +23,7 @@ import android.widget.Button;
 import android.widget.ListView;
 
 import com.example.yotam707.feedmeapp.data.DataManager;
+import com.firebase.ui.auth.AuthUI;
 
 
 import java.io.IOException;
@@ -124,6 +125,7 @@ public class FeedMeActivity extends AppCompatActivity implements NavigationView.
         int id = item.getItemId();
 
         if (id == R.id.close) {
+            AuthUI.getInstance().signOut(this);
             finish();
         }
 

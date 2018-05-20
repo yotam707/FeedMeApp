@@ -2,6 +2,7 @@ package com.example.yotam707.feedmeapp;
 
 import com.example.yotam707.feedmeapp.DB.DatabaseHandler;
 import com.example.yotam707.feedmeapp.data.DataManager;
+import com.firebase.ui.auth.AuthUI;
 
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -151,6 +152,7 @@ public class DetailActivity extends AppCompatActivity implements NavigationView.
         } else if (id == R.id.cat) {
             viewPager.setCurrentItem(1);
         } else if (id == R.id.close) {
+            AuthUI.getInstance().signOut(this);
             finish();
         }
 

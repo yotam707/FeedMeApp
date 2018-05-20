@@ -20,6 +20,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.example.yotam707.feedmeapp.data.DataManager;
+import com.firebase.ui.auth.AuthUI;
 
 import java.util.List;
 
@@ -133,6 +134,7 @@ public class MainCourseActivity extends AppCompatActivity implements NavigationV
         } else if (id == R.id.cat) {
             viewPager.setCurrentItem(1);
         } else if (id == R.id.close) {
+            AuthUI.getInstance().signOut(this);
             finish();
         }
 
