@@ -6,16 +6,20 @@ public class Recipe {
     private int readyInMinutes;
     private String image;
     private String imgUrl;
+    private String type;
+
 
     public Recipe(){
 
     }
 
-    public Recipe(int id, String title, int readyInMinutes, String image){
+    public Recipe(int id, String title, int readyInMinutes, String image, String imgUrl, String type){
         this.id = id;
         this.title = title;
         this.readyInMinutes = readyInMinutes;
         this.image = image;
+        this.imgUrl = imgUrl;
+        this.type = type;
     }
     public int getId() {
         return id;
@@ -55,5 +59,13 @@ public class Recipe {
 
     public void setImgUrl(String imgUrl) {
         this.imgUrl = imgUrl;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

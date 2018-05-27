@@ -7,6 +7,7 @@ public class UploadImage {
     private Bitmap bitmap;
     private String imageName;
     private Uri uri;
+    private boolean uploaded;
 
     public UploadImage(){
 
@@ -15,6 +16,7 @@ public class UploadImage {
     public UploadImage(Bitmap bitmap, String imageName){
         this.bitmap = bitmap;
         this.imageName = imageName;
+        this.uploaded = false;
     }
 
     public Bitmap getBitmap() {
@@ -39,5 +41,13 @@ public class UploadImage {
 
     public void setUri(Uri uri) {
         this.uri = uri;
+    }
+
+    public boolean isUploaded() {
+        return uploaded;
+    }
+
+    public void setUploaded(boolean uploaded) {
+        this.uploaded = uploaded;
     }
 }

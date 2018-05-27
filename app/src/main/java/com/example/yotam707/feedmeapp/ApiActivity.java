@@ -2,7 +2,6 @@ package com.example.yotam707.feedmeapp;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -17,7 +16,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -25,39 +23,40 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.yotam707.feedmeapp.data.Callback.IMyCallback;
+import com.example.yotam707.feedmeapp.Utils.StringUtils;
+import com.example.yotam707.feedmeapp.data.Firestore.FirestoreManager;
+import com.example.yotam707.feedmeapp.domain.AnalyzedInstructions;
+import com.example.yotam707.feedmeapp.domain.Equipment;
+import com.example.yotam707.feedmeapp.domain.FullRecipe;
+import com.example.yotam707.feedmeapp.domain.Ingredients;
 import com.example.yotam707.feedmeapp.domain.Recipe;
-import com.example.yotam707.feedmeapp.domain.RecipesResponse;
+import com.example.yotam707.feedmeapp.domain.Step;
 import com.example.yotam707.feedmeapp.domain.UploadImage;
 import com.example.yotam707.feedmeapp.domain.UploadImageParams;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -69,16 +68,21 @@ public class ApiActivity extends AppCompatActivity {
 
     private static final String TAG = ApiActivity.class.getSimpleName();
 
-Button btn;
-EditText txt;
-Context mContext;
-ImageView imgV;
+    Button btn;
+    EditText txt;
+    Context mContext;
+    ImageView imgV;
     private AsyncTask mMyTask;
     private ProgressDialog mProgressDialog;
     private ConstraintLayout mCLayout;
     private Uri uri;
-String url = "https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/search?query=*&number=30";
+    String url = "https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/search?query=*&number=30";
+    String urlInformation = "https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/";
+    String urlIngridient = "https://spoonacular.com/cdn/ingredients_100x100/";
+    String urlEquipement = "https://spoonacular.com/cdn/equipment_100x100/";
 
+    List<FullRecipe> fullRecipes;
+    ArrayList<List<Recipe>> listObj;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,62 +98,273 @@ String url = "https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes
         // Progress dialog horizontal style
         mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         // Progress dialog title
-        mProgressDialog.setTitle("AsyncTask");
+        //mProgressDialog.setTitle("AsyncTask");
         // Progress dialog message
-        mProgressDialog.setMessage("Please wait, we are downloading your image file...");
+        //mProgressDialog.setMessage("Please wait, we are downloading your image file...");
 
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final Gson gson = new GsonBuilder().create();
-                if (txt.getText() != null) {
-                    RequestQueue requestQueue = Volley.newRequestQueue(mContext);
-                    String urlToQuery = url + "&type=" + txt.getText();
-                    StringRequest jsonArrayRequest = new StringRequest(Request.Method.GET, urlToQuery, new Response.Listener<String>() {
-                        @Override
-                        public void onResponse(String response) {
-                            Log.d(TAG, response);
-                            List<Recipe> recipeList;
-                            try {
-                                JSONObject jsonObject = new JSONObject(response);
-                                String urlImage = jsonObject.getString("baseUri");
-                                recipeList = Arrays.asList(gson.fromJson(jsonObject.getJSONArray("results").toString(), Recipe[].class));
-                                UploadImageParams params = new UploadImageParams();
-                                params.setUrl(stringToURL(
-                                        urlImage+"/"+recipeList.get(0).getImage()));
-                                params.setImageName(recipeList.get(0).getImage());
-                               mMyTask = new DownloadTask().execute(params);
-                                if(uri != null){
-                                    recipeList.get(0).setImgUrl(uri.getPath());
-                                }
-
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-
-
-                        }
-                    }, new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            Log.d(TAG, error.getMessage());
-                        }
-                    }) {
-                        @Override
-                        public Map<String, String> getHeaders() throws AuthFailureError  {
-                            Map<String, String> headers = new HashMap<>();
-                            headers.put("X-Mashape-Key", "9HmtbD95PRmsht1DgeqSCh8N8KLTp17CGuwjsnaM0bgcQn5tbr");
-                            headers.put("Accept", "application/json");
-                            return headers;
-                        }
-                    };
-                    requestQueue.add(jsonArrayRequest);
-                }
+                //CreateApiCallToRecipe();
+                //GetAllRecipes();
+                GetAllFullRecipes();
             }
         });
         }
-//todo: need to finish this method - figure out how to return Uri when finished downloading and uploading.
-    private class DownloadTask extends AsyncTask<UploadImageParams,IMyCallback,UploadImage> {
+
+        public void GetAllFullRecipes(){
+            FirestoreManager.getAllFullRecipes(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if(task.isSuccessful()){
+                        fullRecipes = new ArrayList<>();
+                        for(DocumentSnapshot document: task.getResult()){
+                            fullRecipes.add(document.toObject(FullRecipe.class));
+
+                            Log.d(TAG, document.getId() + " => " + document.getData());
+                        }
+                        CreateEquipmentAndIngredients(fullRecipes);
+                    }
+                }
+            }, new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+
+                }
+            });
+        }
+        public void CreateEquipmentAndIngredients(List<FullRecipe> fullRecipes){
+            for(FullRecipe fullRecipe: fullRecipes){
+//                if(fullRecipe.getExtendedIngredients().size() > 0){
+//                    UploadIngredient(fullRecipe.getExtendedIngredients());
+//                    UploadIngredientImage(fullRecipe.getExtendedIngredients());
+//                }
+                if(fullRecipe.getAnalyzedInstructions().size() > 0){
+                   for(AnalyzedInstructions analyzedInstructions : fullRecipe.getAnalyzedInstructions()){
+                       if(analyzedInstructions.getSteps().size() > 0) {
+                           for (Step step : analyzedInstructions.getSteps()){
+                               if(step.getEquipment().size() > 0) {
+                                   UploadEquipmentAndCheck(step.getEquipment());
+                               }
+                           }
+                       }
+                   }
+                }
+            }
+        }
+
+        public void UploadEquipmentAndCheck(List<Equipment> list){
+            for(final Equipment equipment: list) {
+                FirestoreManager.getEquipment(Integer.toString(equipment.getId()), new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (!task.isSuccessful()) {
+                            UploadEquipment(equipment);
+                            UploadEquipmentImage(equipment);
+                        }
+                    }
+                }, new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d(TAG, "UploadEquipmentAndCheck Error: "+e.getMessage());
+                    }
+                });
+            }
+        }
+        public void UploadIngredient(List<Ingredients> list){
+            FirestoreManager.addNewIngredient(list, new OnSuccessListener() {
+                @Override
+                public void onSuccess(Object o) {
+                    Log.d(TAG, "Ingredient added to firestore");
+                    mProgressDialog.hide();
+                }
+            }, new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.d(TAG, "Ingredient Error: "+e.getMessage());
+                }
+            });
+        }
+
+        public void UploadEquipment(Equipment list){
+            FirestoreManager.addNewEquipment(list, new OnSuccessListener() {
+                @Override
+                public void onSuccess(Object o) {
+                    Log.d(TAG, "Equipment added to firestore");
+                    mProgressDialog.hide();
+                }
+            }, new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.d(TAG, "Equipment Error: "+e.getMessage());
+                }
+            });
+        }
+
+        public void UploadIngredientImage(List<Ingredients> list){
+            for(Ingredients ing : list){
+                if(!ing.getImage().isEmpty()){
+                    UploadImageParams params = new UploadImageParams();
+                    params.setUrl(stringToURL(urlIngridient + ing.getImage()));
+                    params.setImageName(ing.getName());
+                    mMyTask = new DownloadTask().execute(params);
+                }
+            }
+
+        }
+
+    public void UploadEquipmentImage(Equipment equipment){
+        if(!equipment.getImage().isEmpty()){
+            UploadImageParams params = new UploadImageParams();
+            params.setUrl(stringToURL(urlEquipement + equipment.getImage()));
+            params.setImageName(equipment.getName());
+            mMyTask = new DownloadTask().execute(params);
+        }
+    }
+
+        public void CreateFullRecipes(List<FullRecipe> list){
+            FirestoreManager.addNewFullRecipe(list, new OnSuccessListener() {
+                @Override
+                public void onSuccess(Object o) {
+                    Log.d(TAG, "Full Recipe added to firestore");
+                    mProgressDialog.hide();
+                }
+            }, new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.d(TAG, "Full Recipe Error: "+e.getMessage());
+                }
+            });
+        }
+
+        public void GetFullRecipe(final List<Recipe> list){
+            final Gson gson = new GsonBuilder().create();
+            fullRecipes = new ArrayList<>();
+            RequestQueue requestQueue = Volley.newRequestQueue(mContext);
+            final int listSize = list.size();
+            mProgressDialog.show();
+            for (Recipe recipe : list) {
+                String urlToQuery = urlInformation + recipe.getId() + "/information";
+                StringRequest jsonArrayRequest = new StringRequest(Request.Method.GET, urlToQuery, new Response.Listener<String>() {
+
+                    @Override
+                    public void onResponse(String response) {
+                        FullRecipe fullRecipe;
+                        fullRecipe = gson.fromJson(response, FullRecipe.class);
+                        fullRecipes.add(fullRecipe);
+                        Log.d(TAG, fullRecipe.toString());
+                        if(fullRecipes.size() == listSize){
+                            CreateFullRecipes(fullRecipes);
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                })
+                {
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError  {
+                        Map<String, String> headers = new HashMap<>();
+                        headers.put("X-Mashape-Key", "9HmtbD95PRmsht1DgeqSCh8N8KLTp17CGuwjsnaM0bgcQn5tbr");
+                        headers.put("Accept", "application/json");
+                        return headers;
+                    }
+                };
+                requestQueue.add(jsonArrayRequest);
+            }
+
+
+        }
+
+        public void GetAllRecipes(){
+            listObj = new ArrayList<>();
+            FirestoreManager.getAllDessertRecipes(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if(task.isSuccessful()){
+                        List<Recipe> list = new ArrayList<>();
+                        for(DocumentSnapshot document: task.getResult()){
+                            list.add(document.toObject(Recipe.class));
+
+                            Log.d(TAG, document.getId() + " => " + document.getData());
+                        }
+                        GetFullRecipe(list);
+                    }
+                }
+            }, new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.d(TAG, "Error getting documents: "+ e.getMessage());
+                }
+            });
+        }
+        public void CreateApiCallToRecipe(){
+            final Gson gson = new GsonBuilder().create();
+            if (txt.getText() != null) {
+                RequestQueue requestQueue = Volley.newRequestQueue(mContext);
+                mProgressDialog.show();
+                String urlToQuery = url + "&type=" + changeSpaces(txt.getText().toString());
+                StringRequest jsonArrayRequest = new StringRequest(Request.Method.GET, urlToQuery, new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d(TAG, response);
+                        List<Recipe> recipeList;
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            String urlImage = jsonObject.getString("baseUri");
+                            recipeList = Arrays.asList(gson.fromJson(jsonObject.getJSONArray("results").toString(), Recipe[].class));
+                            String recipeType = StringUtils.convertToCamelCase(txt.getText().toString());
+                            recipeType = recipeType.replaceAll("\\s+","");
+
+
+
+                            FirestoreManager.addNewRecipe(recipeType, recipeList, new OnSuccessListener() {
+                                @Override
+                                public void onSuccess(Object o) {
+                                    Log.d(TAG, "Recipes added to firestore");
+                                    mProgressDialog.hide();
+                                }
+                            }, new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.d(TAG, "Recipes Error: "+e.getMessage());
+                                }
+                            });
+
+                            for ( Recipe recipe : recipeList) {
+                                UploadImageParams params = new UploadImageParams();
+                                params.setUrl(stringToURL(urlImage+"/"+recipe.getImage()));
+                                params.setImageName(recipe.getImage());
+                                recipe.setType(recipeType);
+                                mMyTask = new DownloadTask().execute(params);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        mProgressDialog.hide();
+                        Log.d(TAG, error.getMessage());
+                    }
+                }) {
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError  {
+                        Map<String, String> headers = new HashMap<>();
+                        headers.put("X-Mashape-Key", "9HmtbD95PRmsht1DgeqSCh8N8KLTp17CGuwjsnaM0bgcQn5tbr");
+                        headers.put("Accept", "application/json");
+                        return headers;
+                    }
+                };
+                requestQueue.add(jsonArrayRequest);
+            }
+        }
+        private class DownloadTask extends AsyncTask<UploadImageParams,Void,UploadImage> {
         // Before the tasks execution
         protected void onPreExecute() {
             // Display the progress dialog on async task start
@@ -187,18 +402,12 @@ String url = "https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes
         }
 
         // When all async task done
-        protected void onPostExecute(UploadImage result){
+        protected void onPostExecute(final UploadImage result){
             // Hide the progress dialog
             mProgressDialog.dismiss();
             if(result!=null){
                 // Save bitmap to internal storage
-
-                saveImageToStorage(result, new IMyCallback() {
-                    @Override
-                    public void onCallback(Uri value) {
-                        uri = value;
-                    }
-                });
+                saveImageToStorage(result);
 
             }else {
                 // Notify user that an error occurred while downloading image
@@ -207,6 +416,9 @@ String url = "https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes
         }
     }
 
+    public String changeSpaces(String val){
+       return val.replace(' ', '+');
+    }
 
     protected URL stringToURL(String urlString){
         try{
@@ -219,7 +431,7 @@ String url = "https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes
     }
 
     // Custom method to save a bitmap into internal storage
-    protected void saveImageToStorage(UploadImage uploadImage, final IMyCallback myCallback){
+    protected void saveImageToStorage(UploadImage uploadImage){
         FirebaseStorage storage = FirebaseStorage.getInstance();
         StorageReference storageReference = storage.getReference();
         StorageReference uploadImageReference = storageReference.child("images/"+uploadImage.getImageName());
@@ -237,9 +449,7 @@ String url = "https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 mProgressDialog.dismiss();
-
                 Toast.makeText(ApiActivity.this, "Uploaded", Toast.LENGTH_SHORT).show();
-                myCallback.onCallback(taskSnapshot.getDownloadUrl());
             }
         }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
             @Override
