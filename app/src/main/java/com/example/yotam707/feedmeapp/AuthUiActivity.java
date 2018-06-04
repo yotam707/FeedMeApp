@@ -19,6 +19,8 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.protobuf.Api;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -75,7 +77,7 @@ public class AuthUiActivity extends AppCompatActivity {
                 FirestoreManager.addNewUser(authUser, new OnSuccessListener() {
                     @Override
                     public void onSuccess(Object o) {
-                        startActivity(new Intent(AuthUiActivity.this, MainCourseActivity.class));
+                        startActivity(new Intent(AuthUiActivity.this, ApiActivity.class));
                     }
                 }, new OnFailureListener() {
                     @Override

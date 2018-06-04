@@ -2,6 +2,7 @@ package com.example.yotam707.feedmeapp.data;
 
 import android.content.Context;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.util.Log;
 import android.view.Menu;
@@ -14,6 +15,17 @@ import com.example.yotam707.feedmeapp.GenQueue;
 import com.example.yotam707.feedmeapp.Ingredient;
 import com.example.yotam707.feedmeapp.R;
 import com.example.yotam707.feedmeapp.Steps;
+import com.example.yotam707.feedmeapp.Utils.StringUtils;
+import com.example.yotam707.feedmeapp.data.Firestore.FirestoreManager;
+import com.example.yotam707.feedmeapp.domain.CategoryTypeEnum;
+import com.example.yotam707.feedmeapp.domain.FullRecipe;
+import com.example.yotam707.feedmeapp.domain.Recipe;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,16 +37,25 @@ import java.util.Map;
  */
 public class DataManager {
 
+    private final String TAG = this.getClass().getSimpleName();
     private static DataManager mInstance = null;
-    private List<Course> courses;
+
+    //Display courses
+    private List<Recipe> appetizerCourses;
+    private List<Recipe> mainCourses;
+    private List<Recipe> desertCourses;
+    private List<Recipe> sideDishCourses;
+    private Map<CourseType, List<Recipe>> coursesCollection;
+    private Map<String, List<Recipe>> categoryCourseCollection;
+    private List<String> categories;
+
     private List<Course> allCourses;
 	DatabaseHandler dbHandler;
     Context ctx;
 	List<CourseType> groupList;
     private GenQueue<Course> coursesToAdd;
      List<Course> coursesToAddList;
-    private Map<CourseType, List<Course>> coursesCollection;
-    //private List<String> groupList;
+
     private List<Category> categoriesList;
     private GenQueue<Steps> stepsGenQueue;
     private List<Steps> stepsList;
@@ -61,16 +82,18 @@ public class DataManager {
     }
 
     private DataManager(Context ctx) {
-        allCourses = new ArrayList<Course>();
-        coursesToAddList = new ArrayList<Course>();
+        allCourses = new ArrayList<>();
+        coursesToAddList = new ArrayList<>();
         coursesToAdd = new GenQueue<Course>();
-        //createStepsList();
-        //createIngredientList();
-        createCategoryList(ctx);
+        createCategoryList();
+        createCategoryRecipe();
+        //createCategoryList(ctx);
         createGroupList();
-        createCollection(ctx);
- 		dbHandler = new DatabaseHandler(ctx);
-        this.ctx = ctx;
+        createCollection();
+
+        //createCollection(ctx);
+ 		//dbHandler = new DatabaseHandler(ctx);
+        //this.ctx = ctx;
 
     }
 
@@ -138,7 +161,7 @@ public class DataManager {
         return allCourses;
     }
 
-    public Map<CourseType,List<Course>> getCoursesCollection(){
+    public Map<CourseType,List<Recipe>> getCoursesCollection(){
         return coursesCollection;
     }
     public List<Category> getCategoriesList(){
@@ -160,10 +183,219 @@ public class DataManager {
     }
 
     private void createGroupList() {
-        groupList = new ArrayList<CourseType>();
-        groupList.add(CourseType.FIRST);
-        groupList.add(CourseType.MAIN);
-        groupList.add(CourseType.DESSERT);
+        groupList = new ArrayList<>();
+        for(CourseType cType: CourseType.values()){
+            groupList.add(cType);
+        }
+//        groupList.add(CourseType.APPETIZER);
+//        groupList.add(CourseType.MAIN_COURSE);
+//        groupList.add(CourseType.SIDE_DISH);
+//        groupList.add(CourseType.DESSERT);
+    }
+
+    private void createCategoryRecipe(){
+        categoryCourseCollection = new HashMap<>();
+
+        for(CategoryTypeEnum type : CategoryTypeEnum.values())
+            switch (type) {
+                case Thai:
+                    FirestoreManager.getThaiCategory(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                List<Recipe> list = new ArrayList<>();
+                                for (DocumentSnapshot document : task.getResult()) {
+                                    list.add(document.toObject(Recipe.class));
+                                    Log.d(TAG, document.getId() + " => " + document.getData());
+                                }
+                                categoryCourseCollection.put(CategoryTypeEnum.Thai.name(), list);
+                            }
+                        }
+                    }, new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.d(TAG, "Error getting Thai documents: " + e.getMessage());
+                        }
+                    });
+                    continue;
+                case Greek:
+                    FirestoreManager.getGreekCategory(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                List<Recipe> list = new ArrayList<>();
+                                for (DocumentSnapshot document : task.getResult()) {
+                                    list.add(document.toObject(Recipe.class));
+
+                                    Log.d(TAG, document.getId() + " => " + document.getData());
+                                }
+                                categoryCourseCollection.put(CategoryTypeEnum.Greek.name(), list);
+                            }
+                        }
+                    }, new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.d(TAG, "Error getting Greek documents: " + e.getMessage());
+                        }
+                    });
+                    continue;
+                case Indian:
+                    FirestoreManager.getIndianCategory(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                List<Recipe> list = new ArrayList<>();
+                                for (DocumentSnapshot document : task.getResult()) {
+                                    list.add(document.toObject(Recipe.class));
+
+                                    Log.d(TAG, document.getId() + " => " + document.getData());
+                                }
+                                categoryCourseCollection.put(CategoryTypeEnum.Indian.name(), list);
+                            }
+                        }
+                    }, new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.d(TAG, "Error getting Indian documents: " + e.getMessage());
+                        }
+                    });
+                    continue;
+                case African:
+                    FirestoreManager.getAfricanCategory(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                List<Recipe> list = new ArrayList<>();
+                                for (DocumentSnapshot document : task.getResult()) {
+                                    list.add(document.toObject(Recipe.class));
+
+                                    Log.d(TAG, document.getId() + " => " + document.getData());
+                                }
+                                categoryCourseCollection.put(CategoryTypeEnum.African.name(), list);
+                            }
+                        }
+                    }, new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.d(TAG, "Error getting African documents: " + e.getMessage());
+                        }
+                    });
+                    continue;
+                case Chinese:
+                    FirestoreManager.getChineseategory(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                List<Recipe> list = new ArrayList<>();
+                                for (DocumentSnapshot document : task.getResult()) {
+                                    list.add(document.toObject(Recipe.class));
+
+                                    Log.d(TAG, document.getId() + " => " + document.getData());
+                                }
+                                categoryCourseCollection.put(CategoryTypeEnum.Chinese.name(), list);
+                            }
+                        }
+                    }, new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.d(TAG, "Error getting Chinese documents: " + e.getMessage());
+                        }
+                    });
+                    continue;
+                case Italian:
+                    FirestoreManager.getItalianCategory(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                List<Recipe> list = new ArrayList<>();
+                                for (DocumentSnapshot document : task.getResult()) {
+                                    list.add(document.toObject(Recipe.class));
+
+                                    Log.d(TAG, document.getId() + " => " + document.getData());
+                                }
+                                categoryCourseCollection.put(CategoryTypeEnum.Italian.name(), list);
+                            }
+                        }
+                    }, new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.d(TAG, "Error getting Italian documents: " + e.getMessage());
+                        }
+                    });
+                    continue;
+                case Mexican:
+                    FirestoreManager.getMexicanCategory(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                List<Recipe> list = new ArrayList<>();
+                                for (DocumentSnapshot document : task.getResult()) {
+                                    list.add(document.toObject(Recipe.class));
+
+                                    Log.d(TAG, document.getId() + " => " + document.getData());
+                                }
+                                categoryCourseCollection.put(CategoryTypeEnum.Mexican.name(), list);
+                            }
+                        }
+                    }, new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.d(TAG, "Error getting Mexican documents: " + e.getMessage());
+                        }
+                    });
+                    continue;
+                case American:
+                    FirestoreManager.getAmericanCategory(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                List<Recipe> list = new ArrayList<>();
+                                for (DocumentSnapshot document : task.getResult()) {
+                                    list.add(document.toObject(Recipe.class));
+
+                                    Log.d(TAG, document.getId() + " => " + document.getData());
+                                }
+                                categoryCourseCollection.put(CategoryTypeEnum.American.name(), list);
+                            }
+                        }
+                    }, new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.d(TAG, "Error getting American documents: " + e.getMessage());
+                        }
+                    });
+                    continue;
+                case Middle_Eastern:
+                    FirestoreManager.getMiddleEastrenCategory(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                List<Recipe> list = new ArrayList<>();
+                                for (DocumentSnapshot document : task.getResult()) {
+                                    list.add(document.toObject(Recipe.class));
+
+                                    Log.d(TAG, document.getId() + " => " + document.getData());
+                                }
+                                categoryCourseCollection.put(StringUtils.changeSpaces(CategoryTypeEnum.Middle_Eastern.name()), list);
+                            }
+                        }
+                    }, new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.d(TAG, "Error getting Greek documents: " + e.getMessage());
+                        }
+                    });
+                    continue;
+            }
+    }
+    private void createCategoryList(){
+        categoriesList = new ArrayList<>();
+        int counter = 0;
+        categoriesList.add(new Category(counter,"All" ));
+        for(CategoryTypeEnum type : CategoryTypeEnum.values()){
+            counter++;
+            categoriesList.add(new Category(counter, StringUtils.removeUnderscoreAndSPaces(type.name())));
+        }
     }
 
     private void createCategoryList(Context ctx){
@@ -238,108 +470,220 @@ public class DataManager {
         return null;
     }
 
-    private void createCollection(Context ctx) {
-        dbHandler = new DatabaseHandler(ctx);
-        //if (dbHandler.getAllCourses().size() <= 0){
-        initDb(ctx);
-        //}
+    private void createCollection(){
         coursesCollection = new HashMap<>();
-        List<Course> firstsCourse = dbHandler.getCoursesByType(CourseType.FIRST);
-        List<Course> mainCourses = dbHandler.getCoursesByType(CourseType.MAIN);
-        List<Course> desertCourses = dbHandler.getCoursesByType(CourseType.DESSERT);
+        FirestoreManager.getAllAppetizerRecipes(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()){
+                    appetizerCourses = new ArrayList<>();
+                    for(DocumentSnapshot document: task.getResult()){
+                        appetizerCourses.add(document.toObject(Recipe.class));
+                        Log.d(TAG, document.getId() + " => " + document.getData());
+                    }
+                    coursesCollection.put(CourseType.APPETIZER, appetizerCourses);
+                }
+            }
+        }, new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d(TAG, "Error getting documents: "+ e.getMessage());
+            }
+        });
 
+        FirestoreManager.getAllMainCourseRecipes(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()){
+                    mainCourses = new ArrayList<>();
+                    for(DocumentSnapshot document: task.getResult()){
+                        mainCourses.add(document.toObject(Recipe.class));
+                        Log.d(TAG, document.getId() + " => " + document.getData());
+                    }
+                    coursesCollection.put(CourseType.MAIN_COURSE, mainCourses);
+                }
+            }
+        }, new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d(TAG, "Error getting documents: "+ e.getMessage());
+            }
+        });
 
+        FirestoreManager.getAllDessertRecipes(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()){
+                    desertCourses = new ArrayList<>();
+                    for(DocumentSnapshot document: task.getResult()){
+                        desertCourses.add(document.toObject(Recipe.class));
+                        Log.d(TAG, document.getId() + " => " + document.getData());
+                    }
+                    coursesCollection.put(CourseType.DESSERT, desertCourses);
+                }
+            }
+        }, new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d(TAG, "Error getting documents: "+ e.getMessage());
+            }
+        });
 
-        for (CourseType type : groupList) {
-            int i=0;
-            if (type == CourseType.FIRST) {
-                loadChild(firstsCourse);
+        FirestoreManager.getAllSideDishRecipes(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()){
+                    sideDishCourses = new ArrayList<>();
+                    for(DocumentSnapshot document: task.getResult()){
+                        sideDishCourses.add(document.toObject(Recipe.class));
+                        Log.d(TAG, document.getId() + " => " + document.getData());
+                    }
 
-            } else if (type == CourseType.MAIN)
-               loadChild(mainCourses);
-            else
-                loadChild(desertCourses);
-            i++;
-            Log.d("loop","loop"+i);
-            coursesCollection.put(type, courses);
-        }
+                    coursesCollection.put(CourseType.SIDE_DISH, sideDishCourses);
+                }
+            }
+        }, new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d(TAG, "Error getting documents: "+ e.getMessage());
+            }
+        });
     }
 
-    private void initDb(Context ctx){
-        dbHandler.clearDb();
+//    private void createCollection(Context ctx) {
+//        dbHandler = new DatabaseHandler(ctx);
+//        //if (dbHandler.getAllCourses().size() <= 0){
+//        initDb(ctx);
+//        //}
+//        coursesCollection = new HashMap<>();
+//        List<Recipe> appetizerCourses = dbHandler.getCoursesByType(CourseType.APPETIZER);
+//        List<Recipe> mainCourses = dbHandler.getCoursesByType(CourseType.MAIN_COURSE);
+//        List<Recipe> desertCourses = dbHandler.getCoursesByType(CourseType.DESSERT);
+//
+//
+//
+//        for (CourseType type : groupList) {
+//            int i=0;
+//            if (type == CourseType.FIRST) {
+//                loadChild(firstsCourse);
+//
+//            } else if (type == CourseType.MAIN)
+//               loadChild(mainCourses);
+//            else
+//                loadChild(desertCourses);
+//            i++;
+//            Log.d("loop","loop"+i);
+//            coursesCollection.put(type, courses);
+//        }
+//    }
 
-        for(int x = 1; x < categoriesList.size(); x++){
-            dbHandler.addCategory(categoriesList.get(x));
-        }
+//    private void initDb(Context ctx){
+//        dbHandler.clearDb();
+//
+//        for(int x = 1; x < categoriesList.size(); x++){
+//            dbHandler.addCategory(categoriesList.get(x));
+//        }
+//
+//        Course[] firstsCourse = {new Course(1,CourseType.FIRST,R.drawable.salad,dbHandler.getImageUri(R.drawable.salad), "Salad",1,categoriesList.get(1).getName(), "Description 1", new ArrayList<Steps>(), new ArrayList<Ingredient>()),
+//                new Course(2,CourseType.FIRST,R.drawable.eggplant,dbHandler.getImageUri(R.drawable.eggplant), "EggPlant",1,categoriesList.get(1).getName(), "Description 2",new ArrayList<Steps>(), new ArrayList<Ingredient>()),
+//                new Course(3,CourseType.FIRST,R.drawable.hasbrownies,dbHandler.getImageUri(R.drawable.hasbrownies), "Hash Brown",1,categoriesList.get(1).getName(), "Description 3",new ArrayList<Steps>(), new ArrayList<Ingredient>())};
+//
+////        Course[] firstsCourse = {new Course(1,CourseType.FIRST,R.drawable.salad,dbHandler.getImageUri(R.drawable.salad), "Salad",1,categoriesList.get(1).getName(), "Description 1", new ArrayList<>(stepsList), new ArrayList<>(ingredientList)),
+////                new Course(2,CourseType.FIRST,R.drawable.eggplant,dbHandler.getImageUri(R.drawable.eggplant), "EggPlant",1,categoriesList.get(1).getName(), "Description 2", new ArrayList<>(stepsList), new ArrayList<>(ingredientList)),
+////                new Course(3,CourseType.FIRST,R.drawable.hasbrownies,dbHandler.getImageUri(R.drawable.hasbrownies), "Hash Brown",1,categoriesList.get(1).getName(), "Description 3", new ArrayList<>(stepsList), new ArrayList<>(ingredientList))};
+//
+//
+//        for (int i = 0; i < firstsCourse.length ; i++) {
+//                List<Steps> tempList = createStepsList(firstsCourse[i].getId());
+//                firstsCourse[i].setStepsList(new ArrayList<Steps>(tempList));
+//            for (int j = 0; j < firstsCourse[i].getStepsList().size(); j++) {
+//                dbHandler.addStep(firstsCourse[i].getStepsList().get(j));
+//            }
+//            List<Ingredient> tempIngList = createIngredientList(firstsCourse[i].getId());
+//            firstsCourse[i].setIngredientList(new ArrayList<Ingredient>(tempIngList));
+//            for (int j = 0; j < firstsCourse[i].getIngredientList().size(); j++) {
+//                dbHandler.addIngredient(firstsCourse[i].getIngredientList().get(j));
+//            }
+//            dbHandler.addCourse(firstsCourse[i]);
+//        }
+//
+//
+//
+//        Course[] mainCourses = { new Course(4,CourseType.MAIN,R.drawable.tomatopasta,dbHandler.getImageUri(R.drawable.tomatopasta), "Tomato Pasta",2,categoriesList.get(2).getName(), "Description 4",new ArrayList<Steps>(), new ArrayList<Ingredient>()),
+//                new Course(5,CourseType.MAIN,R.drawable.omlette,dbHandler.getImageUri(R.drawable.omlette), "Omelet",2,categoriesList.get(2).getName(), "Description 5", new ArrayList<Steps>(), new ArrayList<Ingredient>()),
+//                new Course(6,CourseType.MAIN,R.drawable.fish,dbHandler.getImageUri(R.drawable.fish), "Fish",2,categoriesList.get(2).getName(), "Description 6", new ArrayList<Steps>(), new ArrayList<Ingredient>())};
+//
+//        for (int i = 0; i < mainCourses.length ; i++) {
+//            List<Steps> tempList =  createStepsList(mainCourses[i].getId());
+//            mainCourses[i].setStepsList(new ArrayList<Steps>(tempList));
+//            for (int j = 0; j < mainCourses[i].getStepsList().size(); j++) {
+//                dbHandler.addStep(mainCourses[i].getStepsList().get(j));
+//            }
+//            List<Ingredient> tempIngList = createIngredientList(mainCourses[i].getId());
+//            mainCourses[i].setIngredientList(new ArrayList<Ingredient>(tempIngList));
+//            for (int j = 0; j < mainCourses[i].getIngredientList().size(); j++) {
+//                dbHandler.addIngredient(mainCourses[i].getIngredientList().get(j));
+//            }
+//            dbHandler.addCourse(mainCourses[i]);
+//        }
+//
+//        Course[] desertCourses = {  new Course(7,CourseType.DESSERT,R.drawable.chocolatecake,dbHandler.getImageUri(R.drawable.chocolatecake), "Chocolate Cake",3,categoriesList.get(3).getName(), "Description 7",new ArrayList<Steps>(), new ArrayList<Ingredient>()),
+//                new Course(8,CourseType.DESSERT,R.drawable.bananaroti,dbHandler.getImageUri(R.drawable.bananaroti), "Banana Roti",3,categoriesList.get(3).getName(), "Description 8", new ArrayList<Steps>(), new ArrayList<Ingredient>())};
+//
+//        for (int i = 0; i < desertCourses.length ; i++) {
+//            List<Steps> tempList = createStepsList(desertCourses[i].getId());
+//            desertCourses[i].setStepsList(new ArrayList<Steps>(tempList));
+//            for (int j = 0; j < desertCourses[i].getStepsList().size(); j++) {
+//                dbHandler.addStep(desertCourses[i].getStepsList().get(j));
+//            }
+//            List<Ingredient> tempIngList = createIngredientList(desertCourses[i].getId());
+//            desertCourses[i].setIngredientList(new ArrayList<Ingredient>(tempIngList));
+//            for (int j = 0; j < desertCourses[i].getIngredientList().size(); j++) {
+//                dbHandler.addIngredient(desertCourses[i].getIngredientList().get(j));
+//
+//            }
+//            dbHandler.addCourse(desertCourses[i]);
+//        }
+//    }
 
-        Course[] firstsCourse = {new Course(1,CourseType.FIRST,R.drawable.salad,dbHandler.getImageUri(R.drawable.salad), "Salad",1,categoriesList.get(1).getName(), "Description 1", new ArrayList<Steps>(), new ArrayList<Ingredient>()),
-                new Course(2,CourseType.FIRST,R.drawable.eggplant,dbHandler.getImageUri(R.drawable.eggplant), "EggPlant",1,categoriesList.get(1).getName(), "Description 2",new ArrayList<Steps>(), new ArrayList<Ingredient>()),
-                new Course(3,CourseType.FIRST,R.drawable.hasbrownies,dbHandler.getImageUri(R.drawable.hasbrownies), "Hash Brown",1,categoriesList.get(1).getName(), "Description 3",new ArrayList<Steps>(), new ArrayList<Ingredient>())};
+//    private void loadChild(List<Course> coursesLists) {
+//        courses = new ArrayList<Course>();
+//        for (int i= 0; i<coursesLists.size(); i++){
+//            courses.add(coursesLists.get(i));
+//            System.out.println(courses.get(i).getCategoryId());
+//            allCourses.add(coursesLists.get(i));
+//        }
+//    }
 
-//        Course[] firstsCourse = {new Course(1,CourseType.FIRST,R.drawable.salad,dbHandler.getImageUri(R.drawable.salad), "Salad",1,categoriesList.get(1).getName(), "Description 1", new ArrayList<>(stepsList), new ArrayList<>(ingredientList)),
-//                new Course(2,CourseType.FIRST,R.drawable.eggplant,dbHandler.getImageUri(R.drawable.eggplant), "EggPlant",1,categoriesList.get(1).getName(), "Description 2", new ArrayList<>(stepsList), new ArrayList<>(ingredientList)),
-//                new Course(3,CourseType.FIRST,R.drawable.hasbrownies,dbHandler.getImageUri(R.drawable.hasbrownies), "Hash Brown",1,categoriesList.get(1).getName(), "Description 3", new ArrayList<>(stepsList), new ArrayList<>(ingredientList))};
-
-
-        for (int i = 0; i < firstsCourse.length ; i++) {
-                List<Steps> tempList = createStepsList(firstsCourse[i].getId());
-                firstsCourse[i].setStepsList(new ArrayList<Steps>(tempList));
-            for (int j = 0; j < firstsCourse[i].getStepsList().size(); j++) {
-                dbHandler.addStep(firstsCourse[i].getStepsList().get(j));
-            }
-            List<Ingredient> tempIngList = createIngredientList(firstsCourse[i].getId());
-            firstsCourse[i].setIngredientList(new ArrayList<Ingredient>(tempIngList));
-            for (int j = 0; j < firstsCourse[i].getIngredientList().size(); j++) {
-                dbHandler.addIngredient(firstsCourse[i].getIngredientList().get(j));
-            }
-            dbHandler.addCourse(firstsCourse[i]);
-        }
-
-
-
-        Course[] mainCourses = { new Course(4,CourseType.MAIN,R.drawable.tomatopasta,dbHandler.getImageUri(R.drawable.tomatopasta), "Tomato Pasta",2,categoriesList.get(2).getName(), "Description 4",new ArrayList<Steps>(), new ArrayList<Ingredient>()),
-                new Course(5,CourseType.MAIN,R.drawable.omlette,dbHandler.getImageUri(R.drawable.omlette), "Omelet",2,categoriesList.get(2).getName(), "Description 5", new ArrayList<Steps>(), new ArrayList<Ingredient>()),
-                new Course(6,CourseType.MAIN,R.drawable.fish,dbHandler.getImageUri(R.drawable.fish), "Fish",2,categoriesList.get(2).getName(), "Description 6", new ArrayList<Steps>(), new ArrayList<Ingredient>())};
-
-        for (int i = 0; i < mainCourses.length ; i++) {
-            List<Steps> tempList =  createStepsList(mainCourses[i].getId());
-            mainCourses[i].setStepsList(new ArrayList<Steps>(tempList));
-            for (int j = 0; j < mainCourses[i].getStepsList().size(); j++) {
-                dbHandler.addStep(mainCourses[i].getStepsList().get(j));
-            }
-            List<Ingredient> tempIngList = createIngredientList(mainCourses[i].getId());
-            mainCourses[i].setIngredientList(new ArrayList<Ingredient>(tempIngList));
-            for (int j = 0; j < mainCourses[i].getIngredientList().size(); j++) {
-                dbHandler.addIngredient(mainCourses[i].getIngredientList().get(j));
-            }
-            dbHandler.addCourse(mainCourses[i]);
-        }
-
-        Course[] desertCourses = {  new Course(7,CourseType.DESSERT,R.drawable.chocolatecake,dbHandler.getImageUri(R.drawable.chocolatecake), "Chocolate Cake",3,categoriesList.get(3).getName(), "Description 7",new ArrayList<Steps>(), new ArrayList<Ingredient>()),
-                new Course(8,CourseType.DESSERT,R.drawable.bananaroti,dbHandler.getImageUri(R.drawable.bananaroti), "Banana Roti",3,categoriesList.get(3).getName(), "Description 8", new ArrayList<Steps>(), new ArrayList<Ingredient>())};
-
-        for (int i = 0; i < desertCourses.length ; i++) {
-            List<Steps> tempList = createStepsList(desertCourses[i].getId());
-            desertCourses[i].setStepsList(new ArrayList<Steps>(tempList));
-            for (int j = 0; j < desertCourses[i].getStepsList().size(); j++) {
-                dbHandler.addStep(desertCourses[i].getStepsList().get(j));
-            }
-            List<Ingredient> tempIngList = createIngredientList(desertCourses[i].getId());
-            desertCourses[i].setIngredientList(new ArrayList<Ingredient>(tempIngList));
-            for (int j = 0; j < desertCourses[i].getIngredientList().size(); j++) {
-                dbHandler.addIngredient(desertCourses[i].getIngredientList().get(j));
-
-            }
-            dbHandler.addCourse(desertCourses[i]);
-        }
+    public List<Recipe> getAppetizerCourses() {
+        return appetizerCourses;
     }
 
-    private void loadChild(List<Course> coursesLists) {
-        courses = new ArrayList<Course>();
-        for (int i= 0; i<coursesLists.size(); i++){
-            courses.add(coursesLists.get(i));
-            System.out.println(courses.get(i).getCategoryId());
-            allCourses.add(coursesLists.get(i));
-        }
+    public void setAppetizerCourses(List<Recipe> appetizerCourses) {
+        this.appetizerCourses = appetizerCourses;
+    }
+
+    public List<Recipe> getMainCourses() {
+        return mainCourses;
+    }
+
+    public void setMainCourses(List<Recipe> mainCourses) {
+        this.mainCourses = mainCourses;
+    }
+
+    public List<Recipe> getDesertCourses() {
+        return desertCourses;
+    }
+
+    public void setDesertCourses(List<Recipe> desertCourses) {
+        this.desertCourses = desertCourses;
+    }
+
+    public List<Recipe> getSideDishCourses() {
+        return sideDishCourses;
+    }
+
+    public void setSideDishCourses(List<Recipe> sideDishCourses) {
+        this.sideDishCourses = sideDishCourses;
     }
 }

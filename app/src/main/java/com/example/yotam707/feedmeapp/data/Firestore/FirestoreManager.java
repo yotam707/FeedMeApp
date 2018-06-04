@@ -24,6 +24,12 @@ public class FirestoreManager {
         fireStore.collection(FirestoreEnum.Users.USERS).document(user.getUid()).set(user).addOnSuccessListener(onSuccessListener).addOnFailureListener(onFailureListener);
     }
 
+    public static void addNewRecipeByCuisine(String cuisine, List<Recipe> recipes, OnSuccessListener onSuccessListener, OnFailureListener onFailureListener){
+        for(Recipe recipe: recipes) {
+            fireStore.collection(cuisine+FirestoreEnum.Categories.CATEGORY).document().set(recipe).addOnSuccessListener(onSuccessListener).addOnFailureListener(onFailureListener);
+        }
+    }
+
     public static void addNewRecipe(String type, List<Recipe> recipes, OnSuccessListener onSuccessListener, OnFailureListener onFailureListener){
         for(Recipe recipe: recipes) {
             recipe.setType(type);
@@ -78,4 +84,49 @@ public class FirestoreManager {
         fireStore.collection(FirestoreEnum.FullRecipes.FULL_RECIPES).get().addOnCompleteListener(onCompleteListener).addOnFailureListener(onFailureListener);
     }
 
+    public static void getAfricanCategory(OnCompleteListener onCompleteListener, OnFailureListener onFailureListener){
+        fireStore.collection(FirestoreEnum.Categories.AFRICAN).get().addOnCompleteListener(onCompleteListener).addOnFailureListener(onFailureListener);
+    }
+    public static void getAmericanCategory(OnCompleteListener onCompleteListener, OnFailureListener onFailureListener){
+        fireStore.collection(FirestoreEnum.Categories.AMERICAN).get().addOnCompleteListener(onCompleteListener).addOnFailureListener(onFailureListener);
+    }
+    public static void getChineseategory(OnCompleteListener onCompleteListener, OnFailureListener onFailureListener){
+        fireStore.collection(FirestoreEnum.Categories.CHINESE).get().addOnCompleteListener(onCompleteListener).addOnFailureListener(onFailureListener);
+    }
+    public static void getGreekCategory(OnCompleteListener onCompleteListener, OnFailureListener onFailureListener){
+        fireStore.collection(FirestoreEnum.Categories.GREEK).get().addOnCompleteListener(onCompleteListener).addOnFailureListener(onFailureListener);
+    }
+    public static void getIndianCategory(OnCompleteListener onCompleteListener, OnFailureListener onFailureListener){
+        fireStore.collection(FirestoreEnum.Categories.INDIAN).get().addOnCompleteListener(onCompleteListener).addOnFailureListener(onFailureListener);
+    }
+    public static void getItalianCategory(OnCompleteListener onCompleteListener, OnFailureListener onFailureListener){
+        fireStore.collection(FirestoreEnum.Categories.ITALIAN).get().addOnCompleteListener(onCompleteListener).addOnFailureListener(onFailureListener);
+    }
+    public static void getMexicanCategory(OnCompleteListener onCompleteListener, OnFailureListener onFailureListener){
+        fireStore.collection(FirestoreEnum.Categories.MEXICAN).get().addOnCompleteListener(onCompleteListener).addOnFailureListener(onFailureListener);
+    }
+    public static void getMiddleEastrenCategory(OnCompleteListener onCompleteListener, OnFailureListener onFailureListener){
+        fireStore.collection(FirestoreEnum.Categories.MIDDLE_EASTERN).get().addOnCompleteListener(onCompleteListener).addOnFailureListener(onFailureListener);
+    }
+    public static void getThaiCategory(OnCompleteListener onCompleteListener, OnFailureListener onFailureListener){
+        fireStore.collection(FirestoreEnum.Categories.THAI).get().addOnCompleteListener(onCompleteListener).addOnFailureListener(onFailureListener);
+    }
+
+//    public static void getAllCategories(OnCompleteListener onCompleteListener, OnFailureListener onFailureListener){
+//        fireStore.collection(FirestoreEnum.Categories.CATEGORIES).document(FirestoreEnum.Categories.CATEGORIES_CUISINE).get().addOnCompleteListener(onCompleteListener).addOnFailureListener(onFailureListener);
+//    }
+//    public static void getAllCategoryRecipes(String category, OnCompleteListener onCompleteListener, OnFailureListener onFailureListener){
+//        fireStore.collection(FirestoreEnum.Categories.CATEGORIES).document(FirestoreEnum.Categories.CATEGORIES_CUISINE).collection(category).get().addOnCompleteListener(onCompleteListener).addOnFailureListener(onFailureListener);
+//    }
+
+//    public static void addCategoryRecipe(String category, List<Recipe> recipes,OnCompleteListener onCompleteListener, OnFailureListener onFailureListener){
+//        for(Recipe recipe: recipes) {
+//            fireStore.collection(category + FirestoreEnum.Categories.CATEGORIES).document().set(recipe).addOnCompleteListener(onCompleteListener).addOnFailureListener(onFailureListener);
+//        }
+//    }
+
+
+    public static void getCategoryList(OnCompleteListener onCompleteListener, OnFailureListener onFailureListener) {
+        fireStore.collection("CATEGORIES").document("CategoryList").get().addOnCompleteListener(onCompleteListener).addOnFailureListener(onFailureListener);
+    }
 }

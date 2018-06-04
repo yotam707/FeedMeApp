@@ -11,6 +11,7 @@ public class StringUtils {
                 result += next.toLowerCase();
             }
         }
+        result = result.replace('_', ' ');
         String[] splited = result.split("\\s+");
         String[] splited1 = new String[splited.length];
 
@@ -33,5 +34,13 @@ public class StringUtils {
             result += " " + splited1[i];
         }
         return result;
+    }
+
+    public static String changeSpaces(String val){
+        val =  val.replace(' ', '+');
+        return  val.replace('_', '+');
+    }
+    public static String removeUnderscoreAndSPaces(String val){
+        return  val.replace('_', ' ').replaceAll("\\s+","");
     }
 }

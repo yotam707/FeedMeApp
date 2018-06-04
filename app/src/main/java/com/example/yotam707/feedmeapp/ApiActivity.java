@@ -26,8 +26,11 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.yotam707.feedmeapp.Utils.StringUtils;
+import com.example.yotam707.feedmeapp.data.DataManager;
+import com.example.yotam707.feedmeapp.data.Firestore.FirestoreEnum;
 import com.example.yotam707.feedmeapp.data.Firestore.FirestoreManager;
 import com.example.yotam707.feedmeapp.domain.AnalyzedInstructions;
+import com.example.yotam707.feedmeapp.domain.CategoryTypeEnum;
 import com.example.yotam707.feedmeapp.domain.Equipment;
 import com.example.yotam707.feedmeapp.domain.FullRecipe;
 import com.example.yotam707.feedmeapp.domain.Ingredients;
@@ -64,6 +67,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.opencensus.internal.StringUtil;
+
 public class ApiActivity extends AppCompatActivity {
 
     private static final String TAG = ApiActivity.class.getSimpleName();
@@ -80,7 +85,8 @@ public class ApiActivity extends AppCompatActivity {
     String urlInformation = "https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/";
     String urlIngridient = "https://spoonacular.com/cdn/ingredients_100x100/";
     String urlEquipement = "https://spoonacular.com/cdn/equipment_100x100/";
-
+    String[] categoryArr = new String[]{"African","American","Chinese", "Greek", "Indian","Italian", "Mexican" , "Middle Eastern", "Thai"};
+    List<String> categoryList = new ArrayList<>();
     List<FullRecipe> fullRecipes;
     ArrayList<List<Recipe>> listObj;
     @Override
@@ -101,18 +107,25 @@ public class ApiActivity extends AppCompatActivity {
         //mProgressDialog.setTitle("AsyncTask");
         // Progress dialog message
         //mProgressDialog.setMessage("Please wait, we are downloading your image file...");
-
+        //categoryList = Arrays.asList(categoryArr);
+        DataManager.getInstance(getApplicationContext());
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //CreateApiCallToRecipe();
                 //GetAllRecipes();
-                GetAllFullRecipes();
+                //GetAllFullRecipes();
+                //CreateRecipeByCuisineType();
+                //DataManager.getInstance(getApplicationContext());
             }
         });
         }
 
-        public void GetAllFullRecipes(){
+
+
+
+
+    public void GetAllFullRecipes(){
             FirestoreManager.getAllFullRecipes(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -152,6 +165,72 @@ public class ApiActivity extends AppCompatActivity {
                 }
             }
         }
+
+        public void CreateRecipeByCuisineType(){
+            final Gson gson = new GsonBuilder().create();
+
+                RequestQueue requestQueue = Volley.newRequestQueue(mContext);
+                mProgressDialog.show();
+                final String cuisineType = CategoryTypeEnum.Thai.name();
+                String urlToQuery = url + "&cuisine=" + changeSpaces(cuisineType);
+                StringRequest jsonArrayRequest = new StringRequest(Request.Method.GET, urlToQuery, new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d(TAG, response);
+                        List<Recipe> recipeList;
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            String urlImage = jsonObject.getString("baseUri");
+                            recipeList = Arrays.asList(gson.fromJson(jsonObject.getJSONArray("results").toString(), Recipe[].class));
+                            String camelCaseCuisineType = StringUtils.convertToCamelCase(cuisineType);
+                            camelCaseCuisineType = camelCaseCuisineType.replaceAll("\\s+","");
+
+
+
+                            FirestoreManager.addNewRecipeByCuisine(camelCaseCuisineType, recipeList, new OnSuccessListener() {
+                                @Override
+                                public void onSuccess(Object o) {
+                                    Log.d(TAG, "Recipes by Cuisine added to firestore");
+                                    mProgressDialog.hide();
+                                }
+                            }, new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.d(TAG, "Recipes by Cuisine Error: "+e.getMessage());
+                                }
+                            });
+
+                            for ( Recipe recipe : recipeList) {
+                                UploadImageParams params = new UploadImageParams();
+                                params.setUrl(stringToURL(urlImage+"/"+recipe.getImage()));
+                                params.setImageName(recipe.getImage());
+                                mMyTask = new DownloadTask().execute(params);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        mProgressDialog.hide();
+                        Log.d(TAG, error.getMessage());
+                    }
+                }) {
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError  {
+                        Map<String, String> headers = new HashMap<>();
+                        headers.put("X-Mashape-Key", "9HmtbD95PRmsht1DgeqSCh8N8KLTp17CGuwjsnaM0bgcQn5tbr");
+                        headers.put("Accept", "application/json");
+                        return headers;
+                    }
+                };
+                requestQueue.add(jsonArrayRequest);
+
+        }
+
 
         public void UploadEquipmentAndCheck(List<Equipment> list){
             for(final Equipment equipment: list) {
@@ -213,7 +292,7 @@ public class ApiActivity extends AppCompatActivity {
 
         }
 
-    public void UploadEquipmentImage(Equipment equipment){
+        public void UploadEquipmentImage(Equipment equipment){
         if(!equipment.getImage().isEmpty()){
             UploadImageParams params = new UploadImageParams();
             params.setUrl(stringToURL(urlEquipement + equipment.getImage()));
@@ -417,7 +496,8 @@ public class ApiActivity extends AppCompatActivity {
     }
 
     public String changeSpaces(String val){
-       return val.replace(' ', '+');
+       val =  val.replace(' ', '+');
+       return  val.replace('_', '+');
     }
 
     protected URL stringToURL(String urlString){

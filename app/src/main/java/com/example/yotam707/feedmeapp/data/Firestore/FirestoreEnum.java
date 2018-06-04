@@ -26,6 +26,16 @@ public class FirestoreEnum {
     }
 
     public static class Categories{
-        public static final String CATEGORIES = "Categories";
+        public static  final String CATEGORY = "Category";
+        public static final String CATEGORIES_CUISINE = "CategoriesCuisine";
+        public static final String AFRICAN = "African"+CATEGORY;
+        public static final String AMERICAN = "American"+CATEGORY;
+        public static final String CHINESE = "Chinese"+CATEGORY;
+        public static final String GREEK = "Greek" +CATEGORY;
+        public static final String INDIAN = "Indian" + CATEGORY;
+        public static final String ITALIAN = "Italian" + CATEGORY;
+        public static final String MEXICAN = "Mexican" + CATEGORY;
+        public static final String MIDDLE_EASTERN = "MiddleEastern"+CATEGORY;
+        public static final String THAI = "Thai"+CATEGORY;
     }
 }

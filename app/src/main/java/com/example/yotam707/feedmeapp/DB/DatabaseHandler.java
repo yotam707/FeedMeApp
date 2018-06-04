@@ -11,12 +11,18 @@ import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 
 import com.example.yotam707.feedmeapp.Category;
 import com.example.yotam707.feedmeapp.Course;
 import com.example.yotam707.feedmeapp.CourseType;
 import com.example.yotam707.feedmeapp.Ingredient;
 import com.example.yotam707.feedmeapp.Steps;
+import com.example.yotam707.feedmeapp.data.Firestore.FirestoreManager;
+import com.example.yotam707.feedmeapp.domain.Recipe;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
 
 import java.io.ByteArrayOutputStream;
 import java.net.URI;
@@ -288,6 +294,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return categoryId;
 
     }
+
 
     public List<Course> getCoursesByType(CourseType type) {
         List<Course> typeList = new ArrayList<>();

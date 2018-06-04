@@ -6,5 +6,5 @@ package com.example.yotam707.feedmeapp;
 
 public enum CourseType {
 
-    FIRST, MAIN, DESSERT
+    APPETIZER, MAIN_COURSE, SIDE_DISH, DESSERT
 }

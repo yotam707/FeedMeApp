@@ -42,22 +42,22 @@ public class TopFragment extends Fragment {
 
         expListView = (ExpandableListView) view.findViewById(R.id.courses_list);
         Activity host = (Activity)thisContext;
-        final ExpandableListAdapter expListAdapter = new ExpandableListAdapter(host , DataManager.getInstance(getContext()).getGroupList(), DataManager.getInstance(getContext()).getCoursesCollection());
-        expListView.setAdapter(expListAdapter);
-
-        expListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
-
-            public boolean onChildClick(ExpandableListView parent, View v,
-                                        int groupPosition, int childPosition, long id) {
-                Course co = (Course) expListAdapter.getChild(
-                        groupPosition, childPosition);
-                final String selected = co.getName();
-                Intent intent = new Intent(getActivity(), DetailActivity.class);
-                intent.putExtra("imagePath", co.getImage().toString());
-                startActivity(intent);
-
-                return true;
-            }
-        });
+//        final ExpandableListAdapter expListAdapter = new ExpandableListAdapter(host , DataManager.getInstance(getContext()).getGroupList(), DataManager.getInstance(getContext()).getCoursesCollection());
+//        expListView.setAdapter(expListAdapter);
+//
+//        expListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+//
+//            public boolean onChildClick(ExpandableListView parent, View v,
+//                                        int groupPosition, int childPosition, long id) {
+//                Course co = (Course) expListAdapter.getChild(
+//                        groupPosition, childPosition);
+//                final String selected = co.getName();
+//                Intent intent = new Intent(getActivity(), DetailActivity.class);
+//                intent.putExtra("imagePath", co.getImage().toString());
+//                startActivity(intent);
+//
+//                return true;
+//            }
+//        });
     }
 }
