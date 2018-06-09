@@ -1,6 +1,5 @@
 package com.example.yotam707.feedmeapp;
 
-import com.example.yotam707.feedmeapp.DB.DatabaseHandler;
 import com.example.yotam707.feedmeapp.data.DataManager;
 import com.firebase.ui.auth.AuthUI;
 
@@ -10,15 +9,12 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
@@ -42,7 +38,7 @@ public class DetailActivity extends AppCompatActivity implements NavigationView.
 
     private ImageView mHeaderImageView;
     private TextView mHeaderTitle;
-    private DatabaseHandler db;
+    RecyclerView ingredientRv;
     private DrawerLayout drawer;
     private ListView ingredientList;
     private ListView stepsList;
@@ -50,13 +46,16 @@ public class DetailActivity extends AppCompatActivity implements NavigationView.
     Course selectedCourse;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        db = new DatabaseHandler(getApplicationContext());
+
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_detail);
+        setContentView(R.layout.activity_detailed_recipe);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        ingredientRv = findViewById(R.id.ingredient_steps);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         drawer = (DrawerLayout) findViewById(R.id.drawerLayout);
-        setSupportActionBar(toolbar);
         viewPager = (ViewPager)findViewById(R.id.view_pager1);
         //create default navigation drawer toggle
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
@@ -67,18 +66,18 @@ public class DetailActivity extends AppCompatActivity implements NavigationView.
         mHeaderImageView = (ImageView) findViewById(R.id.imgHeader);
         mHeaderTitle = (TextView) findViewById(R.id.courseNameHeader);
 
-        String image_path = getIntent().getStringExtra("imagePath");
-        selectedCourse = DataManager.getInstance(this).findCourseByImage(Uri.parse(image_path));
+        String courseId = getIntent().getStringExtra("courseId");
+        //selectedCourse = DataManager.getInstance().findCourseByImage(Uri.parse(image_path));
         //selectedCourse = db.getCourseByImage(Uri.parse(image_path));
         mHeaderTitle.setText(selectedCourse.getName());
         Bitmap icon = null;
-        try {
-            icon = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(), Uri.parse(image_path));
-            mHeaderImageView.setImageBitmap(icon);
+       // try {
+            //icon = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(), Uri.parse(image_path));
+           // mHeaderImageView.setImageBitmap(icon);
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+       // }// catch (IOException e) {
+        //    e.printStackTrace();
+     //   }
         mHeaderTitle.setBackgroundColor(ExpandableListAdapter.getDominantColor(icon));
 
         ingredientList = (ListView) findViewById(R.id.ingredient_list);
@@ -91,7 +90,7 @@ public class DetailActivity extends AppCompatActivity implements NavigationView.
         ListUtils.setDynamicHeight(stepsList);
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        DataManager.getInstance(getApplicationContext()).createNavigationMenu(navigationView);
+        DataManager.getInstance().createNavigationMenu(navigationView);
         assert navigationView != null;
         navigationView.setNavigationItemSelectedListener(this);
 

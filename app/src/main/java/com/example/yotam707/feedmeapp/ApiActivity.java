@@ -108,7 +108,7 @@ public class ApiActivity extends AppCompatActivity {
         // Progress dialog message
         //mProgressDialog.setMessage("Please wait, we are downloading your image file...");
         //categoryList = Arrays.asList(categoryArr);
-        DataManager.getInstance(getApplicationContext());
+        DataManager.getInstance();
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

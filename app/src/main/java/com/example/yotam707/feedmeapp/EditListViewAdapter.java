@@ -61,7 +61,7 @@ public class EditListViewAdapter extends ArrayAdapter<Course> {
                 builder.setPositiveButton("Remove",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                DataManager.getInstance(getContext()).removeCourse(clickedCourse);
+                                DataManager.getInstance().removeCourse(clickedCourse);
                                 notifyDataSetChanged();
                             }
                         });

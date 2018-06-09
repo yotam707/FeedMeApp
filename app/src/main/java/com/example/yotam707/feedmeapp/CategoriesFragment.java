@@ -37,7 +37,7 @@ public class CategoriesFragment extends Fragment{
         Activity host = (Activity)thisContext;
         listView = (ListView)view.findViewById(R.id.courses_list_view);
         categorySpinner = (Spinner)view.findViewById(R.id.cat_spinner);
-        categoryAdapter = new CategoryAdapter(thisContext,android.R.layout.simple_spinner_dropdown_item, DataManager.getInstance(getContext()).getCategoriesList());
+        categoryAdapter = new CategoryAdapter(thisContext,android.R.layout.simple_spinner_dropdown_item, DataManager.getInstance().getCategoriesList());
         categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         categorySpinner.setAdapter(categoryAdapter);
         setListViewAdapter(host);
@@ -87,7 +87,7 @@ public class CategoriesFragment extends Fragment{
 
 
     private void setListViewAdapter(Activity host){
-        adapter = new CourseListViewAdapter(host,R.layout.item_listview, DataManager.getInstance(getContext()).getCourses());
+        adapter = new CourseListViewAdapter(host,R.layout.item_listview, DataManager.getInstance().getCourses());
         listView.setAdapter(adapter);
     }
 }

@@ -36,8 +36,8 @@ public class CoursesProgressService extends IntentService {
 
     @Override
     public void onCreate() {
-        courses = DataManager.getInstance(getApplicationContext()).getQueueAddedCourses();
-        coursesList = DataManager.getInstance(getApplicationContext()).getListAddedCourses();
+        courses = DataManager.getInstance().getQueueAddedCourses();
+        coursesList = DataManager.getInstance().getListAddedCourses();
         manager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
         super.onCreate();
 

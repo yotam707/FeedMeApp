@@ -83,7 +83,7 @@ public class ListViewAdapter extends ArrayAdapter<Course> implements Filterable 
                 builder.setPositiveButton("Add",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                DataManager.getInstance(getContext()).addCourse(clickedCourse);
+                                DataManager.getInstance().addCourse(clickedCourse);
                             }
                         });
                 builder.setNegativeButton("Back",

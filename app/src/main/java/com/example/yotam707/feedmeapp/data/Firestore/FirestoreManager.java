@@ -20,6 +20,9 @@ public class FirestoreManager {
 
     private static FirebaseFirestore fireStore = FirebaseFirestore.getInstance();
 
+    public static FirebaseFirestore getInstance(){
+        return fireStore;
+    }
     public static void addNewUser(AuthUser user, OnSuccessListener onSuccessListener, OnFailureListener onFailureListener){
         fireStore.collection(FirestoreEnum.Users.USERS).document(user.getUid()).set(user).addOnSuccessListener(onSuccessListener).addOnFailureListener(onFailureListener);
     }

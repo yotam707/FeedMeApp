@@ -37,7 +37,7 @@ public class MainCourseActivity extends AppCompatActivity implements NavigationV
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        DataManager.initInstance(this);
+        //DataManager.initInstance();
         setContentView(R.layout.activity_main_course);
 
         viewPager = (ViewPager)findViewById(R.id.view_pager);
@@ -62,7 +62,7 @@ public class MainCourseActivity extends AppCompatActivity implements NavigationV
 
         //handling navigation view item event
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        DataManager.getInstance(getApplicationContext()).createNavigationMenu(navigationView);
+        DataManager.getInstance().createNavigationMenu(navigationView);
         assert navigationView != null;
         navigationView.setNavigationItemSelectedListener(this);
 
@@ -103,7 +103,7 @@ public class MainCourseActivity extends AppCompatActivity implements NavigationV
 
     private void attemptContinue(){
 
-        List<Course> list = DataManager.getInstance(getApplicationContext()).getListAddedCourses();
+        List<Course> list = DataManager.getInstance().getListAddedCourses();
         if(list.size() <= 0 || list== null){
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Notification");

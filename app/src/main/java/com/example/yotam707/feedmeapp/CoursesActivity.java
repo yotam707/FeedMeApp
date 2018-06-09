@@ -74,7 +74,7 @@ public class CoursesActivity extends AppCompatActivity {
 
 
     private void setListViewAdapter(){
-        adapter = new CourseListViewAdapter(this,R.layout.item_listview, DataManager.getInstance(getApplicationContext()).getCourses());
+        adapter = new CourseListViewAdapter(this,R.layout.item_listview, DataManager.getInstance().getCourses());
         listView.setAdapter(adapter);
     }
 

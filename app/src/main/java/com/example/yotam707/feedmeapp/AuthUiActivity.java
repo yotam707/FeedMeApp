@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.yotam707.feedmeapp.data.DataManager;
 import com.example.yotam707.feedmeapp.data.Firestore.FirestoreManager;
 import com.example.yotam707.feedmeapp.domain.AuthUser;
 import com.firebase.ui.auth.AuthUI;
@@ -39,16 +40,18 @@ public class AuthUiActivity extends AppCompatActivity {
         setContentView(R.layout.activity_auth_ui);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        DataManager.initInstance();
         FirebaseAuth auth = FirebaseAuth.getInstance();
         if(auth.getCurrentUser() != null){
-            startActivity(new Intent(this, ApiActivity.class));
+            startActivity(new Intent(this, MainCourseActivity.class));
             finish();
         }
         else{
             showSignInScreen();
         }
     }
+
+
 
     private void showSignInScreen() {
         startActivityForResult(
@@ -77,7 +80,7 @@ public class AuthUiActivity extends AppCompatActivity {
                 FirestoreManager.addNewUser(authUser, new OnSuccessListener() {
                     @Override
                     public void onSuccess(Object o) {
-                        startActivity(new Intent(AuthUiActivity.this, ApiActivity.class));
+                        startActivity(new Intent(AuthUiActivity.this, MainCourseActivity.class));
                     }
                 }, new OnFailureListener() {
                     @Override

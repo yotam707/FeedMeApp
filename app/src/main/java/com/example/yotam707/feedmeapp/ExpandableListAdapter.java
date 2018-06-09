@@ -133,7 +133,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
                 builder.setPositiveButton("Add",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                DataManager.getInstance(context).addCourse(clickedCourse);
+                                DataManager.getInstance().addCourse(clickedCourse);
                             }
                         });
                 builder.setNegativeButton("Back",

@@ -49,8 +49,8 @@ public class EditCoursesActivity extends AppCompatActivity implements Navigation
 
         //handling navigation view item event
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        DataManager.getInstance(getApplicationContext()).createNavigationMenu(navigationView);
-        DataManager.getInstance(getApplicationContext()).setAddedCoursesToSubMenu();
+        DataManager.getInstance().createNavigationMenu(navigationView);
+        DataManager.getInstance().setAddedCoursesToSubMenu();
         assert navigationView != null;
         navigationView.setNavigationItemSelectedListener(this);
 
@@ -59,7 +59,7 @@ public class EditCoursesActivity extends AppCompatActivity implements Navigation
         wantMoreBtn = (Button)findViewById(R.id.back_button_edit_course_activity);
         feedMeBtn = (Button)findViewById(R.id.next_button_edit_course_activity);
 
-        addedCourse = DataManager.getInstance(getApplicationContext()).getListAddedCourses();
+        addedCourse = DataManager.getInstance().getListAddedCourses();
 
         adapter = new EditListViewAdapter(this, addedCourse);
         listView.setAdapter(adapter);
@@ -95,7 +95,7 @@ public class EditCoursesActivity extends AppCompatActivity implements Navigation
 
     private void feedMeClick(){
 
-        List<Course> list = DataManager.getInstance(getApplicationContext()).getListAddedCourses();
+        List<Course> list = DataManager.getInstance().getListAddedCourses();
         final Activity thisContext = this;
         if(list.size() <= 0 || list== null){
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -114,7 +114,7 @@ public class EditCoursesActivity extends AppCompatActivity implements Navigation
         else{
             for(Course c : list){
                 if(c.stepsList.size() <= 0){
-                    c.stepsList = new ArrayList<>(DataManager.getInstance(getApplicationContext()).getStepsList(c.id));
+                    c.stepsList = new ArrayList<>(DataManager.getInstance().getStepsList(c.id));
                     c.stepsGenQueue.clear();
                     c.getStepsToQueue();
                 }

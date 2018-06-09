@@ -46,6 +46,15 @@ public class DataManager {
     private List<Recipe> desertCourses;
     private List<Recipe> sideDishCourses;
     private Map<CourseType, List<Recipe>> coursesCollection;
+
+    public Map<String, List<Recipe>> getCategoryCourseCollection() {
+        return categoryCourseCollection;
+    }
+
+    public void setCategoryCourseCollection(Map<String, List<Recipe>> categoryCourseCollection) {
+        this.categoryCourseCollection = categoryCourseCollection;
+    }
+
     private Map<String, List<Recipe>> categoryCourseCollection;
     private List<String> categories;
 
@@ -66,22 +75,22 @@ public class DataManager {
     public static boolean wasInit = false;
 
 
-    public static DataManager getInstance(Context ctx){
+    public static DataManager getInstance(){
         if(mInstance == null){
-            mInstance = new DataManager(ctx);
+            mInstance = new DataManager();
         }
         return mInstance;
     }
 
-    public static void initInstance(Context ctx){
+    public static void initInstance(){
         if(!wasInit){
-            mInstance = new DataManager(ctx);
+            mInstance = new DataManager();
             wasInit = true;
         }
 
     }
 
-    private DataManager(Context ctx) {
+    private DataManager() {
         allCourses = new ArrayList<>();
         coursesToAddList = new ArrayList<>();
         coursesToAdd = new GenQueue<Course>();
