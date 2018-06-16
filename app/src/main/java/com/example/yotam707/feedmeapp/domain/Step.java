@@ -1,8 +1,10 @@
 package com.example.yotam707.feedmeapp.domain;
 
+import com.example.yotam707.feedmeapp.ui.ui.interfaces.DetailedListItem;
+
 import java.util.List;
 
-public class Step {
+public class Step implements DetailedListItem{
     private int number;
     private String step;
     private List<Ingredients> ingredients;
@@ -56,5 +58,10 @@ public class Step {
 
     public void setLength(Length length) {
         this.length = length;
+    }
+
+    @Override
+    public int getListItemType() {
+        return DetailedListItem.TYPE_STEP;
     }
 }

@@ -4,7 +4,9 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".MainCourseActivity">
+
     <ScrollView android:layout_width="match_parent" android:layout_height="match_parent">
+
         <LinearLayout android:id="@+id/tab_1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -12,92 +14,100 @@
             android:background="@android:color/background_light"
             xmlns:android="http://schemas.android.com/apk/res/android">
 
-            <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Main Course"
-                android:layout_marginLeft="5dp"
-            android:layout_marginBottom="5dp"
-            android:textSize="20sp"
-            android:textColor="@color/colorBlack"
-            android:id="@+id/main_course_title"
-            />
-            <ProgressBar
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/main_progress"/>
-            <android.support.v7.widget.RecyclerView
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/top_fragment_rv_main"
-                android:orientation="horizontal"
-                >
+                android:layout_height="match_parent">
+                <ProgressBar
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/main_progress"
+                    android:layout_gravity="center"
 
-            </android.support.v7.widget.RecyclerView>
-            <TextView
+                    />
+            </LinearLayout>
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Side Dish"
-                android:layout_marginBottom="5dp"
-                android:textSize="20sp"
-                android:layout_marginLeft="5dp"
-                android:textColor="@color/colorBlack"
-                android:id="@+id/side_course_title"
-                />
-            <ProgressBar
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/side_progress"/>
-            <android.support.v7.widget.RecyclerView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/top_fragment_rv_side"
-                android:orientation="horizontal"
+                android:visibility="invisible"
+                android:id="@+id/courses_data_layout"
+                android:orientation="vertical"
                 >
-            </android.support.v7.widget.RecyclerView>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Main Course"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:textSize="20sp"
+                    android:textColor="@color/colorBlack"
+                    android:id="@+id/main_course_title"
+                    />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Appetizers"
-                android:layout_marginLeft="5dp"
-                android:layout_marginBottom="5dp"
-                android:textSize="20sp"
-                android:textColor="@color/colorBlack"
-                android:id="@+id/appetizer_course_title"
-                />
-            <ProgressBar
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/appetizer_progress"/>
-            <android.support.v7.widget.RecyclerView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/top_fragment_rv_appetizer"
-                android:orientation="horizontal"
-                >
-            </android.support.v7.widget.RecyclerView>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Desserts"
-                android:layout_marginLeft="5dp"
-                android:layout_marginBottom="5dp"
-                android:textSize="20sp"
-                android:textColor="@color/colorBlack"
-                android:id="@+id/desserts_course_title"
-                />
-            <ProgressBar
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/dessert_progress"/>
-            <android.support.v7.widget.RecyclerView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/top_fragment_rv_dessert"
-                android:orientation="horizontal"
-                >
-            </android.support.v7.widget.RecyclerView>
+                <android.support.v7.widget.RecyclerView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/top_fragment_rv_main"
+                    android:orientation="horizontal"
+                    >
+
+                </android.support.v7.widget.RecyclerView>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Side Dish"
+                    android:layout_marginBottom="5dp"
+                    android:textSize="20sp"
+                    android:layout_marginLeft="5dp"
+                    android:textColor="@color/colorBlack"
+                    android:id="@+id/side_course_title"
+                    />
+                <android.support.v7.widget.RecyclerView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/top_fragment_rv_side"
+                    android:orientation="horizontal"
+                    >
+                </android.support.v7.widget.RecyclerView>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Appetizers"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:textSize="20sp"
+                    android:textColor="@color/colorBlack"
+                    android:id="@+id/appetizer_course_title"
+                    />
+
+                <android.support.v7.widget.RecyclerView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/top_fragment_rv_appetizer"
+                    android:orientation="horizontal"
+                    >
+                </android.support.v7.widget.RecyclerView>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Desserts"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:textSize="20sp"
+                    android:textColor="@color/colorBlack"
+                    android:id="@+id/desserts_course_title"
+                    />
+                <android.support.v7.widget.RecyclerView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/top_fragment_rv_dessert"
+                    android:orientation="horizontal"
+                    >
+                </android.support.v7.widget.RecyclerView>
+
+
+            </LinearLayout>
+
 
         </LinearLayout>
 

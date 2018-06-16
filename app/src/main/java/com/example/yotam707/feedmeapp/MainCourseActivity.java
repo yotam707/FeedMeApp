@@ -20,6 +20,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.example.yotam707.feedmeapp.data.DataManager;
+import com.example.yotam707.feedmeapp.domain.Recipe;
 import com.firebase.ui.auth.AuthUI;
 
 import java.util.List;
@@ -103,7 +104,7 @@ public class MainCourseActivity extends AppCompatActivity implements NavigationV
 
     private void attemptContinue(){
 
-        List<Course> list = DataManager.getInstance().getListAddedCourses();
+        List<Recipe> list = DataManager.getInstance().getListAddedRecipes();
         if(list.size() <= 0 || list== null){
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Notification");

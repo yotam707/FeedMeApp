@@ -25,6 +25,17 @@ public class FirestoreEnum {
         public static final String FULL_RECIPES = "FullRecipes";
     }
 
+    public static class SelectedRecipes {
+        public static final String SELECTED_RECIPES = "SelectedRecipes";
+        public static final String RECIPES = "Recipes";
+    }
+
+    public static class CookingRequests {
+        public static final String COOKING_REQUESTS = "CookingRequests";
+        public static final String RECIPES = "Recipes";
+        public static final String SELECTED_RECIPES = "SelectedRecipes";
+    }
+
     public static class Categories{
         public static  final String CATEGORY = "Category";
         public static final String CATEGORIES_CUISINE = "CategoriesCuisine";

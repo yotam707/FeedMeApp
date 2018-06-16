@@ -58,10 +58,12 @@ public class TopFragment extends Fragment {
     LinearLayoutManager layoutManagerSide;
     LinearLayoutManager layoutManagerDessert;
     LinearLayoutManager layoutManagerAppetizer;
+    LinearLayout coursesDataLayout;
     ProgressBar mainProgressBar;
-    ProgressBar sideProgressBar;
-    ProgressBar appetizerProgressBar;
-    ProgressBar dessertProgressBar;
+    boolean mainCourseFinish = false;
+    boolean sideDishFinish = false;
+    boolean appetizerFinish = false;
+    boolean dessertFinish = false;
     RecyclerView topMainImageRecyclerView;
     RecyclerView topSideImageRecyclerView;
     RecyclerView topAppetizerImageRecyclerView;
@@ -87,9 +89,6 @@ public class TopFragment extends Fragment {
 
     private void createCollection(){
         mainProgressBar.setVisibility(View.VISIBLE);
-        sideProgressBar.setVisibility(View.VISIBLE);
-        appetizerProgressBar.setVisibility(View.VISIBLE);
-        dessertProgressBar.setVisibility(View.VISIBLE);
         FirestoreManager.getAllAppetizerRecipes(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -99,9 +98,10 @@ public class TopFragment extends Fragment {
                         appetizerCourses.add(document.toObject(Recipe.class));
                         Log.d(TAG, document.getId() + " => " + document.getData());
                     }
-                    mAdapterAppetizer = new ImageScrollRecyclerViewAdapter(appetizerCourses.subList(0,5), thisContext);
+                    mAdapterAppetizer = new ImageScrollRecyclerViewAdapter(appetizerCourses.subList(0,5),CourseType.APPETIZER,thisContext);
                     topAppetizerImageRecyclerView.setAdapter(mAdapterAppetizer);
-                    appetizerProgressBar.setVisibility(View.GONE);
+                    appetizerFinish = true;
+                    checkProgress();
                 }
             }
         }, new OnFailureListener() {
@@ -120,9 +120,10 @@ public class TopFragment extends Fragment {
                         mainCourses.add(document.toObject(Recipe.class));
                         Log.d(TAG, document.getId() + " => " + document.getData());
                     }
-                    mAdapterMain = new ImageScrollRecyclerViewAdapter(mainCourses.subList(0,5),thisContext);
+                    mAdapterMain = new ImageScrollRecyclerViewAdapter(mainCourses.subList(0,5),CourseType.MAIN_COURSE,thisContext);
                     topMainImageRecyclerView.setAdapter(mAdapterMain);
-                    mainProgressBar.setVisibility(View.GONE);
+                    mainCourseFinish = true;
+                    checkProgress();
                 }
             }
         }, new OnFailureListener() {
@@ -141,9 +142,10 @@ public class TopFragment extends Fragment {
                         desertCourses.add(document.toObject(Recipe.class));
                         Log.d(TAG, document.getId() + " => " + document.getData());
                     }
-                    mAdapterDessert = new ImageScrollRecyclerViewAdapter(desertCourses.subList(0,5), thisContext);
+                    mAdapterDessert = new ImageScrollRecyclerViewAdapter(desertCourses.subList(0,5),CourseType.DESSERT, thisContext);
                     topDessertImageRecyclerView.setAdapter(mAdapterDessert);
-                    dessertProgressBar.setVisibility(View.GONE);
+                    dessertFinish = true;
+                    checkProgress();
                 }
             }
         }, new OnFailureListener() {
@@ -162,9 +164,10 @@ public class TopFragment extends Fragment {
                         sideDishCourses.add(document.toObject(Recipe.class));
                         Log.d(TAG, document.getId() + " => " + document.getData());
                     }
-                    mAdapterSide = new ImageScrollRecyclerViewAdapter(sideDishCourses.subList(0,5),thisContext);
+                    mAdapterSide = new ImageScrollRecyclerViewAdapter(sideDishCourses.subList(0,5),CourseType.SIDE_DISH, thisContext);
                     topSideImageRecyclerView.setAdapter(mAdapterSide);
-                    sideProgressBar.setVisibility(View.GONE);
+                    sideDishFinish = true;
+                    checkProgress();
                 }
             }
         }, new OnFailureListener() {
@@ -173,27 +176,32 @@ public class TopFragment extends Fragment {
                 Log.d(TAG, "Error getting documents: "+ e.getMessage());
             }
         });
+
+        checkProgress();
     }
     public void initTopFragmentRecyclerView(View v){
         layoutManagerMain = new LinearLayoutManager(thisContext,LinearLayoutManager.HORIZONTAL,false);
         layoutManagerSide = new LinearLayoutManager(thisContext,LinearLayoutManager.HORIZONTAL,false);
         layoutManagerDessert = new LinearLayoutManager(thisContext,LinearLayoutManager.HORIZONTAL,false);
         layoutManagerAppetizer = new LinearLayoutManager(thisContext,LinearLayoutManager.HORIZONTAL,false);
-
+        coursesDataLayout = v.findViewById(R.id.courses_data_layout);
         topMainImageRecyclerView = v.findViewById(R.id.top_fragment_rv_main);
         topSideImageRecyclerView = v.findViewById(R.id.top_fragment_rv_side);
         topAppetizerImageRecyclerView = v.findViewById(R.id.top_fragment_rv_appetizer);
         topDessertImageRecyclerView = v.findViewById(R.id.top_fragment_rv_dessert);
 
         mainProgressBar = v.findViewById(R.id.main_progress);
-        sideProgressBar = v.findViewById(R.id.side_progress);
-        appetizerProgressBar = v.findViewById(R.id.appetizer_progress);
-        dessertProgressBar = v.findViewById(R.id.dessert_progress);
-
 
         topMainImageRecyclerView.setLayoutManager(layoutManagerMain);
         topSideImageRecyclerView.setLayoutManager(layoutManagerSide);
         topAppetizerImageRecyclerView.setLayoutManager(layoutManagerAppetizer);
         topDessertImageRecyclerView.setLayoutManager(layoutManagerDessert);
+    }
+
+    public void checkProgress(){
+        if(mainCourseFinish && sideDishFinish && appetizerFinish && dessertFinish){
+            mainProgressBar.setVisibility(View.GONE);
+            coursesDataLayout.setVisibility(View.VISIBLE);
+        }
     }
 }

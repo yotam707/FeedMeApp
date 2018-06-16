@@ -2,6 +2,7 @@ package com.example.yotam707.feedmeapp;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,8 +18,12 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.yotam707.feedmeapp.data.DataManager;
+import com.example.yotam707.feedmeapp.data.Firestore.FirestoreManager;
+import com.example.yotam707.feedmeapp.domain.Recipe;
+import com.google.android.gms.tasks.OnFailureListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,13 +34,14 @@ public class EditCoursesActivity extends AppCompatActivity implements Navigation
 
     ListView listView;
     EditListViewAdapter adapter;
-    List<Course> addedCourse;
+    List<Recipe> addedCourse;
     private DrawerLayout drawer;
     Button wantMoreBtn;
     Button feedMeBtn;
-
+    Context mContext;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        mContext = this;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_courses);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -59,7 +65,7 @@ public class EditCoursesActivity extends AppCompatActivity implements Navigation
         wantMoreBtn = (Button)findViewById(R.id.back_button_edit_course_activity);
         feedMeBtn = (Button)findViewById(R.id.next_button_edit_course_activity);
 
-        addedCourse = DataManager.getInstance().getListAddedCourses();
+        addedCourse = DataManager.getInstance().getListAddedRecipes();
 
         adapter = new EditListViewAdapter(this, addedCourse);
         listView.setAdapter(adapter);
@@ -95,7 +101,7 @@ public class EditCoursesActivity extends AppCompatActivity implements Navigation
 
     private void feedMeClick(){
 
-        List<Course> list = DataManager.getInstance().getListAddedCourses();
+        List<Recipe> list = DataManager.getInstance().getListAddedRecipes();
         final Activity thisContext = this;
         if(list.size() <= 0 || list== null){
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -112,14 +118,20 @@ public class EditCoursesActivity extends AppCompatActivity implements Navigation
             alertDialog.show();
         }
         else{
-            for(Course c : list){
-                if(c.stepsList.size() <= 0){
-                    c.stepsList = new ArrayList<>(DataManager.getInstance().getStepsList(c.id));
-                    c.stepsGenQueue.clear();
-                    c.getStepsToQueue();
+//            for(Course c : list){
+//                if(c.stepsList.size() <= 0){
+//                    c.stepsList = new ArrayList<>(DataManager.getInstance().getStepsList(c.id));
+//                    c.stepsGenQueue.clear();
+//                    c.getStepsToQueue();
+//                }
+//            }
+            FirestoreManager.createCookingRequest(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(mContext, "Error Creating Cooking Request", Toast.LENGTH_LONG).show();
                 }
-            }
-            Intent intent =  new Intent(this, FeedMeActivity.class);
+            });
+            Intent intent =  new Intent(this, MainCourseActivity.class);
             startActivity(intent);
         }
     }

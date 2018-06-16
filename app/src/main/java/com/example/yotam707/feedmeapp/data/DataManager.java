@@ -46,7 +46,7 @@ public class DataManager {
     private List<Recipe> desertCourses;
     private List<Recipe> sideDishCourses;
     private Map<CourseType, List<Recipe>> coursesCollection;
-
+    private List<Recipe> recipeListToAdd;
     public Map<String, List<Recipe>> getCategoryCourseCollection() {
         return categoryCourseCollection;
     }
@@ -95,10 +95,11 @@ public class DataManager {
         coursesToAddList = new ArrayList<>();
         coursesToAdd = new GenQueue<Course>();
         createCategoryList();
-        createCategoryRecipe();
+        //createCategoryRecipe();
+        recipeListToAdd = new ArrayList<>();
         //createCategoryList(ctx);
         createGroupList();
-        createCollection();
+        //createCollection();
 
         //createCollection(ctx);
  		//dbHandler = new DatabaseHandler(ctx);
@@ -128,8 +129,8 @@ public class DataManager {
     }
 
     public void setAddedCoursesToSubMenu(){
-        for(Course c : coursesToAddList){
-            subMenu.add(c.getName());
+        for(Recipe r : recipeListToAdd){
+            subMenu.add(r.getTitle());
         }
     }
 
@@ -149,18 +150,38 @@ public class DataManager {
         }
     }
 
+    public void addRecipe(Recipe e){
+        recipeListToAdd.add(e);
+        if(subMenu != null){
+            subMenu.add(e.getTitle());
+        }
+    }
+
     public GenQueue<Course> getQueueAddedCourses(){
         return coursesToAdd;
     }
 
+
     public List<Course> getListAddedCourses(){
         return coursesToAddList;
+    }
+
+    public List<Recipe> getListAddedRecipes(){
+        return recipeListToAdd;
     }
 
     public void removeCourse(Course c){
         int index = coursesToAdd.indexOf(c);
         coursesToAddList.remove(index);
         coursesToAdd.remove(c);
+        if(subMenu != null){
+            subMenu.removeItem(index);
+        }
+    }
+
+    public void removeRecipe(Recipe r){
+        int index = recipeListToAdd.indexOf(r);
+        recipeListToAdd.remove(index);
         if(subMenu != null){
             subMenu.removeItem(index);
         }

@@ -1,6 +1,8 @@
 package com.example.yotam707.feedmeapp.domain;
 
-public class Ingredients {
+import com.example.yotam707.feedmeapp.ui.ui.interfaces.DetailedListItem;
+
+public class Ingredients implements DetailedListItem {
     private int id;
     private String image;
     private String name;
@@ -58,5 +60,10 @@ public class Ingredients {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public int getListItemType() {
+        return DetailedListItem.TYPE_INGRIDIENT;
     }
 }

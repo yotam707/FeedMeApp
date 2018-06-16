@@ -6,6 +6,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v7.graphics.Palette;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,8 +16,16 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.example.yotam707.feedmeapp.data.DataManager;
+import com.example.yotam707.feedmeapp.data.Firestore.FirestoreManager;
+import com.example.yotam707.feedmeapp.data.Firestore.FirestoreStorageManager;
+import com.example.yotam707.feedmeapp.domain.Recipe;
+import com.google.android.gms.tasks.OnFailureListener;
 
 import java.io.IOException;
 import java.util.List;
@@ -22,10 +33,10 @@ import java.util.List;
 /**
  * Created by yotam707 on 9/16/2016.
  */
-public class EditListViewAdapter extends ArrayAdapter<Course> {
-    List<Course> coursesAdded;
+public class EditListViewAdapter extends ArrayAdapter<Recipe> {
+    List<Recipe> coursesAdded;
     Context activity;
-    Course clickedCourse;
+    Recipe clickedCourse;
     final String TAG = EditListViewAdapter.class.getSimpleName();
 
     @Override
@@ -39,16 +50,22 @@ public class EditListViewAdapter extends ArrayAdapter<Course> {
         else{
             holder = (ViewHolder) convertView.getTag();
         }
-        Course c = coursesAdded.get(position);
+        Recipe r = coursesAdded.get(position);
 
-        try {
-            Bitmap m = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), c.getImage());
-            holder.image.setImageBitmap(m);
-        }
-        catch (IOException e){
-            e.printStackTrace();
-        }
-        holder.name.setText(c.getName());
+       // try {
+            Glide
+                    .with(getContext())
+                    .asBitmap()
+                    .load(FirestoreStorageManager.storageReference.child(r.getImage()))
+                    .into(holder.image);
+
+//            Bitmap m = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), r.getImgUrl());
+//            holder.image.setImageBitmap(m);
+//        }
+//        catch (IOException e){
+//            e.printStackTrace();
+//        }
+        holder.name.setText(r.getTitle());
         holder.remove.setImageResource(android.R.drawable.ic_delete);
         holder.remove.setOnClickListener(new View.OnClickListener() {
 
@@ -56,12 +73,18 @@ public class EditListViewAdapter extends ArrayAdapter<Course> {
                 clickedCourse = coursesAdded.get(position);
                 AlertDialog.Builder builder = new AlertDialog.Builder(activity);
                 builder.setTitle("Remove Course");
-                builder.setMessage(clickedCourse.getName() + "\n" +clickedCourse.getDescription());
+                builder.setMessage(clickedCourse.getTitle() + "\n" +clickedCourse.getType());
                 builder.setCancelable(false);
                 builder.setPositiveButton("Remove",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                DataManager.getInstance().removeCourse(clickedCourse);
+                                DataManager.getInstance().removeRecipe(clickedCourse);
+                                FirestoreManager.removeSelectedCourse(clickedCourse, new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Toast.makeText(activity, "Error Removing Recipe", Toast.LENGTH_LONG).show();
+                                    }
+                                });
                                 notifyDataSetChanged();
                             }
                         });
@@ -82,7 +105,7 @@ public class EditListViewAdapter extends ArrayAdapter<Course> {
 
 
 
-    public EditListViewAdapter(Context context, List<Course> list) {
+    public EditListViewAdapter(Context context, List<Recipe> list) {
         super(context, R.layout.edit_item_listview,list);
         this.activity = context;
         this.coursesAdded = list;
@@ -95,9 +118,9 @@ public class EditListViewAdapter extends ArrayAdapter<Course> {
         private ImageView remove;
 
         public ViewHolder(View v) {
-            image = (ImageView) v.findViewById(R.id.lw_course_img_edit);
-            name = (TextView) v.findViewById(R.id.lw_course_name_edit);
-            remove = (ImageView) v.findViewById(R.id.lw_delete);
+            image = v.findViewById(R.id.lw_course_img_edit);
+            name = v.findViewById(R.id.lw_course_name_edit);
+            remove = v.findViewById(R.id.lw_delete);
         }
     }
 }
