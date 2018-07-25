@@ -3,7 +3,7 @@ package com.example.yotam707.feedmeapp.domain;
 public class Length {
     private int number;
     private String unit;
-
+    private int maxWaitingTime;
     public int getNumber() {
         return number;
     }
@@ -18,5 +18,13 @@ public class Length {
 
     public void setUnit(String unit) {
         this.unit = unit;
+    }
+
+    public int getMaxWaitingTime() {
+        return maxWaitingTime;
+    }
+
+    public void setMaxWaitingTime(int maxWaitingTime) {
+        this.maxWaitingTime = maxWaitingTime;
     }
 }

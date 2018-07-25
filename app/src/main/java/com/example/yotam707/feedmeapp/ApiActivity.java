@@ -34,10 +34,12 @@ import com.example.yotam707.feedmeapp.domain.CategoryTypeEnum;
 import com.example.yotam707.feedmeapp.domain.Equipment;
 import com.example.yotam707.feedmeapp.domain.FullRecipe;
 import com.example.yotam707.feedmeapp.domain.Ingredients;
+import com.example.yotam707.feedmeapp.domain.Length;
 import com.example.yotam707.feedmeapp.domain.Recipe;
 import com.example.yotam707.feedmeapp.domain.Step;
 import com.example.yotam707.feedmeapp.domain.UploadImage;
 import com.example.yotam707.feedmeapp.domain.UploadImageParams;
+import com.example.yotam707.feedmeapp.domain.types.RecipeLevelType;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -64,6 +66,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -108,7 +111,8 @@ public class ApiActivity extends AppCompatActivity {
         // Progress dialog message
         //mProgressDialog.setMessage("Please wait, we are downloading your image file...");
         //categoryList = Arrays.asList(categoryArr);
-        DataManager.getInstance();
+        //DataManager.getInstance();
+        GetAllFullRecipes();
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -124,7 +128,9 @@ public class ApiActivity extends AppCompatActivity {
 
 
 
+    public void UpdateFullRecipes(List<FullRecipe> list){
 
+    }
     public void GetAllFullRecipes(){
             FirestoreManager.getAllFullRecipes(new OnCompleteListener<QuerySnapshot>() {
                 @Override
@@ -132,11 +138,55 @@ public class ApiActivity extends AppCompatActivity {
                     if(task.isSuccessful()){
                         fullRecipes = new ArrayList<>();
                         for(DocumentSnapshot document: task.getResult()){
-                            fullRecipes.add(document.toObject(FullRecipe.class));
+                            FullRecipe fr = document.toObject(FullRecipe.class);
+                            if(fr.getAnalyzedInstructions().size() > 0) {
+                                int totalSteps = 0;
+                                int totalWeight = 0;
+                                for (AnalyzedInstructions ai : fr.getAnalyzedInstructions()) {
+                                    if (ai.getSteps().size() > 0) {
+                                        totalSteps +=ai.getSteps().size();
+                                        Iterator<Step> stepIterator = ai.getSteps().iterator();
+                                        while(stepIterator.hasNext()){
+                                            int weight = 0;
+                                            Step s = stepIterator.next();
+                                            if(s.getLength() != null)
+                                                weight += (s.getLength().getMaxWaitingTime()/s.getLength().getNumber());
+                                            if(s.isPssive())
+                                                weight +=2;
+                                            totalWeight += weight;
+                                            s.setPriority(weight);
+                                        }
+                                    }
+                                }
+                                if(totalSteps <= 3) {
+                                    fr.setRecipeLevel(RecipeLevelType.easy);
+                                }
+                                else if( totalSteps > 3 && totalSteps < 8) {
+                                    fr.setRecipeLevel(RecipeLevelType.medium);
+                                    totalWeight +=1;
+                                }
+                                else {
+                                    fr.setRecipeLevel(RecipeLevelType.hard);
+                                    totalWeight +=2;
+                                }
+                                fr.setTotalWeight(totalWeight);
+                            }
+                            fullRecipes.add(fr);
 
                             Log.d(TAG, document.getId() + " => " + document.getData());
                         }
-                        CreateEquipmentAndIngredients(fullRecipes);
+                        FirestoreManager.updateFullRecipe(fullRecipes, new OnSuccessListener() {
+                            @Override
+                            public void onSuccess(Object o) {
+                                Log.d(TAG, "updated successfully");
+                            }
+                        }, new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.d(TAG, "updated error");
+                            }
+                        });
+
                     }
                 }
             }, new OnFailureListener() {
@@ -355,6 +405,29 @@ public class ApiActivity extends AppCompatActivity {
             }
 
 
+        }
+
+        public void CleanRecipes(){
+            listObj = new ArrayList<>();
+            FirestoreManager.getAllMainCourseRecipes(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if(task.isSuccessful()){
+                        List<Recipe> list = new ArrayList<>();
+                        for(DocumentSnapshot document: task.getResult()){
+                            list.add(document.toObject(Recipe.class));
+
+                            Log.d(TAG, document.getId() + " => " + document.getData());
+                        }
+                        List<FullRecipe> listFull = new ArrayList<>();
+                    }
+                }
+            }, new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.d(TAG, "Error getting documents: "+ e.getMessage());
+                }
+            });
         }
 
         public void GetAllRecipes(){

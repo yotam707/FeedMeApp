@@ -59,12 +59,6 @@ public class EditListViewAdapter extends ArrayAdapter<Recipe> {
                     .load(FirestoreStorageManager.storageReference.child(r.getImage()))
                     .into(holder.image);
 
-//            Bitmap m = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), r.getImgUrl());
-//            holder.image.setImageBitmap(m);
-//        }
-//        catch (IOException e){
-//            e.printStackTrace();
-//        }
         holder.name.setText(r.getTitle());
         holder.remove.setImageResource(android.R.drawable.ic_delete);
         holder.remove.setOnClickListener(new View.OnClickListener() {

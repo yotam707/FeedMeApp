@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.yotam707.feedmeapp.ApiActivity;
 import com.example.yotam707.feedmeapp.CourseType;
 import com.example.yotam707.feedmeapp.DetailActivity;
@@ -60,6 +61,7 @@ public class ImageScrollRecyclerViewAdapter extends RecyclerView.Adapter<ImageSc
         GlideApp
                 .with(mContext)
                 .load(FirestoreStorageManager.storageReference.child(currentRecipe.getImage()))
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .fitCenter()
                 .into(holder.image);
 

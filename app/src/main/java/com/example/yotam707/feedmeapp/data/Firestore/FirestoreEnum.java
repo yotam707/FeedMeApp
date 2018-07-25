@@ -28,6 +28,8 @@ public class FirestoreEnum {
     public static class SelectedRecipes {
         public static final String SELECTED_RECIPES = "SelectedRecipes";
         public static final String RECIPES = "Recipes";
+        public static final String COOKING_REQUESTS = "CookingRequests";
+        public static final String ORDERED_RECIPES = "OrderedRecipes";
     }
 
     public static class CookingRequests {

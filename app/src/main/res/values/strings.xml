@@ -31,4 +31,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_auth_ui">AuthUiActivity</string>
     <string name="full_recipe_image">Full Recipe Image</string>
+    <string name="title_activity_cooking">Cooking</string>
+    <string name="cooking_progress_dialog">Cooking In Progress</string>
+    <string name="cooking_progress_content_dialog">We are preparing you your optimal meal</string>
 </resources>

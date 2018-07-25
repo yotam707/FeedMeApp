@@ -1,4 +1,6 @@
 package com.example.yotam707.feedmeapp.domain;
+import com.example.yotam707.feedmeapp.domain.types.RecipeLevelType;
+
 import java.util.List;
 
 public class FullRecipe {
@@ -8,6 +10,10 @@ public class FullRecipe {
     private String instructions;
     private List<AnalyzedInstructions> analyzedInstructions;
     private int readyInMinutes;
+    private int totalWeight;
+    private RecipeLevelType recipeLevel;
+
+
 
 
 
@@ -60,5 +66,22 @@ public class FullRecipe {
 
     public void setInstructions(String instructions) {
         this.instructions = instructions;
+    }
+
+
+    public int getTotalWeight() {
+        return totalWeight;
+    }
+
+    public void setTotalWeight(int totalWeight) {
+        this.totalWeight = totalWeight;
+    }
+
+    public RecipeLevelType getRecipeLevel() {
+        return recipeLevel;
+    }
+
+    public void setRecipeLevel(RecipeLevelType recipeLevel) {
+        this.recipeLevel = recipeLevel;
     }
 }

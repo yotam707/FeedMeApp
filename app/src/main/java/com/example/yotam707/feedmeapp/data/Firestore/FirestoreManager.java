@@ -23,6 +23,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Source;
 
 import java.util.ArrayList;
+import java.util.EventListener;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +39,37 @@ public class FirestoreManager {
     }
     public static void addNewUser(AuthUser user, OnSuccessListener onSuccessListener, OnFailureListener onFailureListener){
         fireStore.collection(FirestoreEnum.Users.USERS).document(user.getUid()).set(user).addOnSuccessListener(onSuccessListener).addOnFailureListener(onFailureListener);
+    }
+
+    public static void updateFullRecipe(List<FullRecipe> list,OnSuccessListener onSuccessListener, OnFailureListener onFailureListener){
+        for(FullRecipe fr : list) {
+            fireStore.collection(FirestoreEnum.FullRecipes.FULL_RECIPES).document(Integer.toString(fr.getId())).set(fr).addOnSuccessListener(onSuccessListener).addOnFailureListener(onFailureListener);
+        }
+    }
+
+    public static void getFullRecipesToDelete(OnSuccessListener onSuccessListener, OnFailureListener onFailureListener){
+
+        fireStore.collection(FirestoreEnum.FullRecipes.FULL_RECIPES).whereEqualTo("analyzedInstructions", null).get().addOnSuccessListener(onSuccessListener).addOnFailureListener(onFailureListener);
+    }
+
+    public static void deleteFullRecipe(String recipeId, OnSuccessListener onSuccessListener, OnFailureListener onFailureListener){
+        fireStore.collection(FirestoreEnum.FullRecipes.FULL_RECIPES).document(recipeId).delete().addOnSuccessListener(onSuccessListener).addOnFailureListener(onFailureListener);
+    }
+
+    public static void deleteRecipe(String recipeId, final String collection, OnSuccessListener onSuccessListener, OnFailureListener onFailureListener){
+        fireStore.collection(collection).whereEqualTo("id", recipeId).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (DocumentSnapshot document : task.getResult()) {
+                        fireStore.collection(collection)
+                                .document(document.getId()).delete();
+                    }
+                } else {
+                    Log.d(TAG, "Error getting documents: ", task.getException());
+                }
+            }
+        }).addOnFailureListener(onFailureListener);
     }
 
     public static void addNewRecipeByCuisine(String cuisine, List<Recipe> recipes, OnSuccessListener onSuccessListener, OnFailureListener onFailureListener){
@@ -106,33 +138,11 @@ public class FirestoreManager {
                 .addOnFailureListener(onFailureListener);
     }
 
-    public static void createCookingRequest(OnFailureListener onFailureListener){
-        fireStore.collection(FirestoreEnum.SelectedRecipes.SELECTED_RECIPES)
-                .document(firebaseAuth.getCurrentUser().getUid())
-                .collection(FirestoreEnum.SelectedRecipes.RECIPES).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    Map<String, ArrayList<Integer>> mapObj = new HashMap<>();
-                    ArrayList<Integer> arr = new ArrayList<>();
-                    for (DocumentSnapshot document : task.getResult()) {
-                        arr.add(document.toObject(Recipe.class).getId());
-                    }
-                    mapObj.put(FirestoreEnum.CookingRequests.RECIPES, arr);
-                    fireStore.collection(FirestoreEnum.CookingRequests.COOKING_REQUESTS)
-                            .document(firebaseAuth.getCurrentUser().getUid())
-                            .collection(FirestoreEnum.SelectedRecipes.SELECTED_RECIPES).document().set(mapObj);
-                } else {
-                    Log.d(TAG, "Error getting documents: ", task.getException());
-                }
-            }
-        }).addOnFailureListener(onFailureListener);
-    }
 
     public static void removeSelectedCourse(Recipe recipe, OnFailureListener onFailureListener) {
         fireStore.collection(FirestoreEnum.SelectedRecipes.SELECTED_RECIPES)
-        .document(firebaseAuth.getCurrentUser().getUid())
-        .collection(FirestoreEnum.SelectedRecipes.RECIPES).whereEqualTo("id", recipe.getId()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                .document(firebaseAuth.getCurrentUser().getUid())
+                .collection(FirestoreEnum.SelectedRecipes.RECIPES).whereEqualTo("id", recipe.getId()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
@@ -147,6 +157,89 @@ public class FirestoreManager {
             }
         }).addOnFailureListener(onFailureListener);
     }
+
+    public static void removeAllSelectedCourses(OnFailureListener onFailureListener) {
+        fireStore.collection(FirestoreEnum.SelectedRecipes.SELECTED_RECIPES)
+                .document(firebaseAuth.getCurrentUser().getUid())
+                .collection(FirestoreEnum.SelectedRecipes.RECIPES).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (DocumentSnapshot document : task.getResult()) {
+                        fireStore.collection(FirestoreEnum.SelectedRecipes.SELECTED_RECIPES)
+                                .document(firebaseAuth.getCurrentUser().getUid())
+                                .collection(FirestoreEnum.SelectedRecipes.RECIPES).document(document.getId()).delete();
+                    }
+                } else {
+                    Log.d(TAG, "Error getting documents: ", task.getException());
+                }
+            }
+        }).addOnFailureListener(onFailureListener);
+
+        fireStore.collection(FirestoreEnum.SelectedRecipes.SELECTED_RECIPES)
+                .document(firebaseAuth.getCurrentUser().getUid())
+                .collection(FirestoreEnum.SelectedRecipes.COOKING_REQUESTS).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (DocumentSnapshot document : task.getResult()) {
+                        fireStore.collection(FirestoreEnum.SelectedRecipes.SELECTED_RECIPES)
+                                .document(firebaseAuth.getCurrentUser().getUid())
+                                .collection(FirestoreEnum.SelectedRecipes.COOKING_REQUESTS).document(document.getId()).delete();
+                    }
+                } else {
+                    Log.d(TAG, "Error getting documents: ", task.getException());
+                }
+            }
+        }).addOnFailureListener(onFailureListener);
+
+        fireStore.collection(FirestoreEnum.SelectedRecipes.SELECTED_RECIPES)
+                .document(firebaseAuth.getCurrentUser().getUid())
+                .collection(FirestoreEnum.SelectedRecipes.ORDERED_RECIPES).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (DocumentSnapshot document : task.getResult()) {
+                        fireStore.collection(FirestoreEnum.SelectedRecipes.SELECTED_RECIPES)
+                                .document(firebaseAuth.getCurrentUser().getUid())
+                                .collection(FirestoreEnum.SelectedRecipes.ORDERED_RECIPES).document(document.getId()).delete();
+                    }
+                } else {
+                    Log.d(TAG, "Error getting documents: ", task.getException());
+                }
+            }
+        }).addOnFailureListener(onFailureListener);
+    }
+
+
+    public static void createCookingRequest(OnFailureListener onFailureListener){
+        fireStore.collection(FirestoreEnum.SelectedRecipes.SELECTED_RECIPES)
+                .document(firebaseAuth.getCurrentUser().getUid())
+                .collection(FirestoreEnum.SelectedRecipes.RECIPES).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    Map<String, ArrayList<Integer>> mapObj = new HashMap<>();
+                    ArrayList<Integer> arr = new ArrayList<>();
+                    for (DocumentSnapshot document : task.getResult()) {
+                        arr.add(document.toObject(Recipe.class).getId());
+                    }
+                    mapObj.put(FirestoreEnum.CookingRequests.RECIPES, arr);
+                    fireStore.collection(FirestoreEnum.SelectedRecipes.SELECTED_RECIPES)
+                            .document(firebaseAuth.getCurrentUser().getUid())
+                            .collection(FirestoreEnum.SelectedRecipes.COOKING_REQUESTS).document().set(mapObj);
+                } else {
+                    Log.d(TAG, "Error getting documents: ", task.getException());
+                }
+            }
+        }).addOnFailureListener(onFailureListener);
+    }
+
+    public static void getCalculatedCookingData(com.google.firebase.firestore.EventListener<DocumentSnapshot> eventListener){
+        fireStore.collection(FirestoreEnum.SelectedRecipes.SELECTED_RECIPES).document(firebaseAuth.getCurrentUser().getUid())
+                .collection(FirestoreEnum.SelectedRecipes.ORDERED_RECIPES).document(FirestoreEnum.SelectedRecipes.RECIPES).addSnapshotListener(eventListener);
+    }
+
     public static void getEquipment(String equipmentId, OnCompleteListener onCompleteListener, OnFailureListener onFailureListener){
         fireStore.collection(FirestoreEnum.Equipment.EQUIPMENT).document(equipmentId).get().addOnFailureListener(onFailureListener).addOnCompleteListener(onCompleteListener);
     }

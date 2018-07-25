@@ -131,7 +131,7 @@ public class EditCoursesActivity extends AppCompatActivity implements Navigation
                     Toast.makeText(mContext, "Error Creating Cooking Request", Toast.LENGTH_LONG).show();
                 }
             });
-            Intent intent =  new Intent(this, MainCourseActivity.class);
+            Intent intent =  new Intent(this, CookingActivity.class);
             startActivity(intent);
         }
     }
