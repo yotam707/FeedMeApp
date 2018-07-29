@@ -119,8 +119,8 @@ public class EditCoursesActivity extends AppCompatActivity implements Navigation
         }
         else{
 //            for(Course c : list){
-//                if(c.stepsList.size() <= 0){
-//                    c.stepsList = new ArrayList<>(DataManager.getInstance().getStepsList(c.id));
+//                if(c.stepsOldList.size() <= 0){
+//                    c.stepsOldList = new ArrayList<>(DataManager.getInstance().getStepsOldList(c.id));
 //                    c.stepsGenQueue.clear();
 //                    c.getStepsToQueue();
 //                }

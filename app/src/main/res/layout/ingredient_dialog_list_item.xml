@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:layout_height="80dp"
+            android:layout_width="wrap_content"
+            android:padding="10dp"
+            android:scaleType="fitXY"
+            android:id="@+id/dialog_ingredient_image"
+            android:contentDescription="@string/app_name"
+            android:adjustViewBounds="true"
+            android:src="@drawable/rice"
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="10dp">
+
+            <TextView
+                android:id="@+id/ingredient_dialog_name"
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                android:layout_height="40dp"
+                android:layout_marginBottom="5dp"
+                android:padding="5dp"
+                android:textSize="20sp"
+                android:text="test"
+                android:textStyle="bold"
+                />
+            <TextView
+                android:id="@+id/ingredient_dialog_quantity"
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                android:layout_height="30dp"
+                android:layout_marginBottom="5dp"
+                android:textSize="20sp"
+                android:paddingLeft="10dp"
+                android:text="test"
+                android:textStyle="normal"
+                android:gravity="start"
+                android:paddingStart="10dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                />
+
+        </LinearLayout>
+    </LinearLayout>
+</android.support.constraint.ConstraintLayout>

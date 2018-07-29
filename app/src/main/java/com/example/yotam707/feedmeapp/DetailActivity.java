@@ -216,11 +216,11 @@ public class DetailActivity extends AppCompatActivity {
         //ingredientList = (ListView) findViewById(R.id.ingredient_list);
         //ingredientList.setAdapter(new IngredientsListAdapter(getApplicationContext(),selectedCourse));
 
-        //stepsList = (ListView) findViewById(R.id.steps_list);
-       // stepsList.setAdapter(new StepsListAdapter(getApplicationContext(),selectedCourse));
+        //stepsOldList = (ListView) findViewById(R.id.steps_list);
+       // stepsOldList.setAdapter(new StepsListAdapter(getApplicationContext(),selectedCourse));
 
         //ListUtils.setDynamicHeight(ingredientList);
-        //ListUtils.setDynamicHeight(stepsList);
+        //ListUtils.setDynamicHeight(stepsOldList);
 
 //        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 //        DataManager.getInstance().createNavigationMenu(navigationView);

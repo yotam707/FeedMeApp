@@ -13,7 +13,9 @@
         android:drawablePadding="8dp"
         android:padding="5dp"
         android:textSize="20sp"
-        android:text="List Item"/>
+        android:text="List Item"
+
+        />
 
 
     <TextView

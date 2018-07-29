@@ -83,7 +83,7 @@ public class ImageScrollRecyclerViewAdapter extends RecyclerView.Adapter<ImageSc
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
                 builder.setTitle("Add Course");
-                builder.setMessage(currentRecipe.getTitle() + "\n" +currentRecipe.getType());
+                builder.setMessage(currentRecipe.getTitle() + "\nCooking time is: " +currentRecipe.getReadyInMinutes());
                 builder.setCancelable(false);
                 builder.setPositiveButton("Add",
                         new DialogInterface.OnClickListener() {

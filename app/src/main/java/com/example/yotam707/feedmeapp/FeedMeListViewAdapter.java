@@ -13,11 +13,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.example.yotam707.feedmeapp.data.DataManager;
-
 import java.util.List;
-
-import static android.content.ContentValues.TAG;
 
 /**
  * Created by yotam707 on 11/11/2016.
@@ -59,7 +55,7 @@ public class FeedMeListViewAdapter extends ArrayAdapter<Course> {
         //holder.image.setImageResource(c.getImage());
         holder.name.setText(c.getName());
         holder.pBar.setIndeterminate(false);
-        holder.pBar.setMax(MAX*c.getStepsList().size());
+        holder.pBar.setMax(MAX*c.getStepsOldList().size());
         holder.pBar.setProgress(c.courseProgress);
         return convertView;
     }

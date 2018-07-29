@@ -26,8 +26,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.yotam707.feedmeapp.Utils.StringUtils;
-import com.example.yotam707.feedmeapp.data.DataManager;
-import com.example.yotam707.feedmeapp.data.Firestore.FirestoreEnum;
 import com.example.yotam707.feedmeapp.data.Firestore.FirestoreManager;
 import com.example.yotam707.feedmeapp.domain.AnalyzedInstructions;
 import com.example.yotam707.feedmeapp.domain.CategoryTypeEnum;
@@ -69,8 +67,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import io.opencensus.internal.StringUtil;
 
 public class ApiActivity extends AppCompatActivity {
 
@@ -142,21 +138,60 @@ public class ApiActivity extends AppCompatActivity {
                             if(fr.getAnalyzedInstructions().size() > 0) {
                                 int totalSteps = 0;
                                 int totalWeight = 0;
+                                int totalTime = fr.getReadyInMinutes();
+                                int totalCalcTime = 0;
                                 for (AnalyzedInstructions ai : fr.getAnalyzedInstructions()) {
                                     if (ai.getSteps().size() > 0) {
+
                                         totalSteps +=ai.getSteps().size();
+                                        int timePerStep = totalTime/totalSteps;
                                         Iterator<Step> stepIterator = ai.getSteps().iterator();
                                         while(stepIterator.hasNext()){
                                             int weight = 0;
                                             Step s = stepIterator.next();
-                                            if(s.getLength() != null)
-                                                weight += (s.getLength().getMaxWaitingTime()/s.getLength().getNumber());
-                                            if(s.isPssive())
-                                                weight +=2;
+                                            if(s.getLength() != null) {
+                                                weight += (s.getLength().getMaxWaitingTime() / s.getLength().getNumber());
+                                                totalCalcTime += s.getLength().getNumber();
+                                            }
+                                            else{
+                                                Length l = new Length();
+                                                l.setNumber(timePerStep);
+                                                totalCalcTime+=timePerStep;
+                                                l.setUnit("minutes");
+                                                l.setMaxWaitingTime(0);
+                                                s.setLength(l);
+                                            }
+                                            if(s.isPassive()) {
+                                                s.getPassiveTime().setPassiveTime(s.getLength().getNumber());
+                                                s.getPassiveTime().setUnit(s.getLength().getUnit());
+                                                weight += 2;
+                                            }
                                             totalWeight += weight;
                                             s.setPriority(weight);
                                         }
+                                        int indexOuterStep = 0;
+                                        int indexInnerStep = 0;
+                                        int stepsSumTime = 0;
+                                        Iterator<Step> stepIterator2 = ai.getSteps().iterator();
+                                        while(stepIterator2.hasNext()){
+
+                                            Step s = stepIterator2.next();
+                                            indexOuterStep++;
+                                            indexInnerStep = indexOuterStep;
+                                            stepsSumTime = 0;
+                                            while(indexInnerStep < ai.getSteps().size()){
+
+                                                if(ai.getSteps().get(indexInnerStep).getLength() != null){
+                                                    stepsSumTime += ai.getSteps().get(indexInnerStep).getLength().getNumber();
+                                                }
+                                                indexInnerStep++;
+                                            }
+                                           s.setTimeLeftToFinishRecipe(stepsSumTime);
+                                        }
                                     }
+                                }
+                                if(totalCalcTime > totalTime){
+                                    fr.setReadyInMinutes(totalCalcTime);
                                 }
                                 if(totalSteps <= 3) {
                                     fr.setRecipeLevel(RecipeLevelType.easy);

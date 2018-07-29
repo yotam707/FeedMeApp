@@ -1,14 +1,8 @@
 package com.example.yotam707.feedmeapp;
 
 
-import android.graphics.Bitmap;
 import android.net.Uri;
 
-import java.net.URI;
-
-import android.content.Context;
-
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,8 +16,8 @@ public class Course {
     public String name;
     public Category category;
     public String description;
-    public GenQueue<Steps> stepsGenQueue;
-    public List<Steps> stepsList;
+    public GenQueue<StepsOld> stepsGenQueue;
+    public List<StepsOld> stepsOldList;
     public int courseProgress;
     public boolean isCurrentCourse;
     public int stepsTotalTime;
@@ -53,10 +47,10 @@ public class Course {
         this.categoryId = categoryId;
     }
 
-    public void setStepsList(List<Steps> stepsList) {
-        this.stepsCount = stepsList.size();
+    public void setStepsOldList(List<StepsOld> stepsOldList) {
+        this.stepsCount = stepsOldList.size();
         this.maxStepsTime = this.stepsCount*MAX;
-        this.stepsList = stepsList;
+        this.stepsOldList = stepsOldList;
         getStepsToQueue();
     }
 
@@ -122,7 +116,7 @@ public class Course {
         return count;
     }
 
-    public Course(int id,CourseType courseType,int imageId ,Uri image, String name, int categoryId, String categoryName, String description, List<Steps> stepsList, List<Ingredient> ingredientList){
+    public Course(int id, CourseType courseType, int imageId , Uri image, String name, int categoryId, String categoryName, String description, List<StepsOld> stepsOldList, List<Ingredient> ingredientList){
         this.id = id;
         this.courseType = courseType;
         this.categoryId = categoryId;
@@ -139,24 +133,24 @@ public class Course {
     }
 
     public void getStepsToQueue(){
-        this.stepsGenQueue = new GenQueue<Steps>();
-        for(Steps s: stepsList){
+        this.stepsGenQueue = new GenQueue<StepsOld>();
+        for(StepsOld s: stepsOldList){
             s.currentStep = false;
-                Steps temp = new Steps(s.stepNum,s.timeInmSeconds,s.description);
+                StepsOld temp = new StepsOld(s.stepNum,s.timeInmSeconds,s.description);
             this.stepsGenQueue.enqueue(temp);
         }
         this.stepsTotalTime = getStepsTotalTime();
-        this.stepsCount = stepsList.size();
+        this.stepsCount = stepsOldList.size();
         this.maxStepsTime = this.stepsCount*MAX;
     }
-    public List<Steps> getStepsList(){
-        return stepsList;
+    public List<StepsOld> getStepsOldList(){
+        return stepsOldList;
     }
 
     public int getImageId(){
         return this.imageId;
     }
-    public boolean isFinished(Steps currentStep ){
+    public boolean isFinished(StepsOld currentStep ){
         if(this.courseProgress < MAX*stepsCount) {
             if(this.stepsGenQueue.getSize() > 0){
                 if(currentStep.isCurrentStepStarted()) {
@@ -175,7 +169,7 @@ public class Course {
     }
 
 
-    public int getCourseProgress(Steps currentStep){
+    public int getCourseProgress(StepsOld currentStep){
         if(currentStep != null){
             if(this.courseProgress < MAX*stepsCount){
                 currentStep.getProgress();
@@ -192,9 +186,9 @@ public class Course {
     }
 
 
-    public Steps getCurrentStep() {
+    public StepsOld getCurrentStep() {
         if(this.courseProgress < MAX*stepsCount) {
-            Steps currentStep = this.stepsGenQueue.peek();
+            StepsOld currentStep = this.stepsGenQueue.peek();
             if(currentStep != null){
                 return currentStep;
             }

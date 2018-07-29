@@ -5,6 +5,9 @@ public class Equipment {
     private String name;
     private String image;
 
+    public Equipment(){
+
+    }
     public int getId() {
         return id;
     }

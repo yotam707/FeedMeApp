@@ -54,7 +54,153 @@
             android:paddingRight="@dimen/activity_horizontal_margin"
             android:paddingTop="@dimen/activity_vertical_margin"
             android:layout_weight="1">
+            <LinearLayout
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="5dp"
+                android:orientation="vertical"
+                android:layout_weight="1"
+                tools:context=".CookingActivity">
+                <TextView
+                android:id="@+id/step_name"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:text="The step name"
+                    android:textSize="20dp"
+                    android:padding="5dp"
+                    android:textStyle="bold|italic"
+                />
 
+                <TextView
+                    android:id="@+id/step_des"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:textSize="15dp"
+                    android:text="The step description will be shown here"
+
+                    />
+
+                <TextView
+                    android:id="@+id/passive_alert"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:textSize="15dp"
+                    android:paddingTop="10dp"
+                    android:textStyle="bold"
+                    android:text="* We will inform you when this step is completed"
+                    android:textColor="@color/fui_bgEmail"
+                    />
+                <TextView
+                    android:id="@+id/step_item_list"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:text="This is what you will need for this step:"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="10dp"
+                    />
+                <ScrollView android:layout_width="match_parent" android:layout_height="match_parent">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:id="@+id/cooking_rv_layout"
+                        android:background="@android:color/background_light"
+                        xmlns:android="http://schemas.android.com/apk/res/android">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Ingredients:"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginBottom="5dp"
+                            android:textSize="15sp"
+                            android:textColor="@color/colorBlack"
+                            android:id="@+id/cooking_ingredients_title"
+                            />
+
+                        <android.support.v7.widget.RecyclerView
+                            android:layout_width="match_parent"
+                            android:layout_marginLeft="5dp"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/cooking_ingredients_rv"
+                            android:orientation="horizontal"
+                            >
+
+                        </android.support.v7.widget.RecyclerView>
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Equipment:"
+                            android:layout_marginBottom="5dp"
+                            android:textSize="15sp"
+                            android:layout_marginLeft="5dp"
+                            android:textColor="@color/colorBlack"
+                            android:id="@+id/cooking_equipment_title"
+                            />
+                        <android.support.v7.widget.RecyclerView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="5dp"
+                            android:id="@+id/cooking_equipment_rv"
+                            android:orientation="horizontal"
+                            >
+                        </android.support.v7.widget.RecyclerView>
+                    </LinearLayout>
+
+                </ScrollView>
+
+
+            </LinearLayout>
+            <RelativeLayout
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="10dp"
+                tools:context=".CookingActivity"
+                android:layout_weight="5"
+                >
+                <TextView
+                    android:id="@+id/tv"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:text=""
+                    />
+                <Button
+                    android:id="@+id/btn_start"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:text="Next"
+                    android:layout_below="@id/tv"
+                    />
+                <Button
+                    android:id="@+id/btn_pause"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:text="Pause"
+                    android:layout_below="@id/tv"
+                    android:layout_toRightOf="@id/btn_start"
+                    />
+                <Button
+                    android:id="@+id/btn_resume"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:text="Resume"
+                    android:layout_below="@id/tv"
+                    android:layout_toRightOf="@id/btn_pause"
+                    />
+                <Button
+                    android:id="@+id/btn_add_time"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:text="+1"
+                    android:layout_below="@id/tv"
+                    android:layout_toRightOf="@id/btn_resume"
+                    />
+            </RelativeLayout>
 
         </LinearLayout>
         <android.support.design.widget.NavigationView
@@ -75,10 +221,10 @@
         android:layout_weight="0"
         android:background="@color/cardview_light_background">
         <Button
-            android:id="@+id/finish_button_feed_me_activity"
+            android:id="@+id/finish_button_cooking_activity"
             android:layout_width="142dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="10dp"
             android:text="Finish"
             android:textStyle="bold"
             android:layout_marginRight="16dp"

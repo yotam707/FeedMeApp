@@ -13,17 +13,14 @@ import com.example.yotam707.feedmeapp.CourseType;
 import com.example.yotam707.feedmeapp.DB.DatabaseHandler;
 import com.example.yotam707.feedmeapp.GenQueue;
 import com.example.yotam707.feedmeapp.Ingredient;
-import com.example.yotam707.feedmeapp.R;
-import com.example.yotam707.feedmeapp.Steps;
+import com.example.yotam707.feedmeapp.StepsOld;
 import com.example.yotam707.feedmeapp.Utils.StringUtils;
 import com.example.yotam707.feedmeapp.data.Firestore.FirestoreManager;
 import com.example.yotam707.feedmeapp.domain.CategoryTypeEnum;
-import com.example.yotam707.feedmeapp.domain.FullRecipe;
 import com.example.yotam707.feedmeapp.domain.Recipe;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -66,8 +63,8 @@ public class DataManager {
      List<Course> coursesToAddList;
 
     private List<Category> categoriesList;
-    private GenQueue<Steps> stepsGenQueue;
-    private List<Steps> stepsList;
+    private GenQueue<StepsOld> stepsGenQueue;
+    private List<StepsOld> stepsOldList;
     private List<Ingredient> ingredientList;
     private Menu addedItemsMenu;
     private SubMenu subMenu;
@@ -107,16 +104,16 @@ public class DataManager {
 
     }
 
-//    public List<Steps> getStepsList(){
-//        if(this.stepsList.size() <= 0){
+//    public List<StepsOld> getStepsOldList(){
+//        if(this.stepsOldList.size() <= 0){
 //            createStepsList();
 //        }
-//        return this.stepsList;
+//        return this.stepsOldList;
 //    }
 
-    public List<Steps> getStepsList(int courseId){
-        List<Steps> tempList = new ArrayList<Steps>();
-        if(this.stepsList.size() <= 0){
+    public List<StepsOld> getStepsList(int courseId){
+        List<StepsOld> tempList = new ArrayList<StepsOld>();
+        if(this.stepsOldList.size() <= 0){
             tempList = createStepsList(courseId);
         }
         return tempList;
@@ -140,9 +137,9 @@ public class DataManager {
         subMenu.clear();
     }
     public void addCourse(Course c){
-        c.setStepsList(createStepsList(c.getId()));
+        c.setStepsOldList(createStepsList(c.getId()));
         c.setIngredientList(createIngredientList(c.getId()));
-        //Course addedC = new Course(c.id, c.imageId, c.name,c.category, c.description, c.stepsList,c.ingredientList);
+        //Course addedC = new Course(c.id, c.imageId, c.name,c.category, c.description, c.stepsOldList,c.ingredientList);
         coursesToAddList.add(c);
         coursesToAdd.enqueue(c);
         if(subMenu != null){
@@ -441,22 +438,22 @@ public class DataManager {
         }
     }
 
-//    public List<Steps> createStepsList(){
-//        //stepsGenQueue = new GenQueue<Steps>();
-//        stepsList = new ArrayList<Steps>();
+//    public List<StepsOld> createStepsList(){
+//        //stepsGenQueue = new GenQueue<StepsOld>();
+//        stepsOldList = new ArrayList<StepsOld>();
 //        for (int i=1; i<3; i++){
-//            //stepsGenQueue.enqueue(new Steps(i,5000,"this is step " +i));
-//            stepsList.add(new Steps(i,5000,"this is step " +i));
+//            //stepsGenQueue.enqueue(new StepsOld(i,5000,"this is step " +i));
+//            stepsOldList.add(new StepsOld(i,5000,"this is step " +i));
 //        }
-//        return stepsList;
+//        return stepsOldList;
 //    }
 
-    public List<Steps> createStepsList(int courseId){
-        //stepsGenQueue = new GenQueue<Steps>();
-        List<Steps> tempList = new ArrayList<Steps>();
+    public List<StepsOld> createStepsList(int courseId){
+        //stepsGenQueue = new GenQueue<StepsOld>();
+        List<StepsOld> tempList = new ArrayList<StepsOld>();
         for (int i=1; i<3; i++){
-            //stepsGenQueue.enqueue(new Steps(courseId,i,5000,"this is step " +i));
-            tempList.add(new Steps(courseId,i,5000,"this is step " +i));
+            //stepsGenQueue.enqueue(new StepsOld(courseId,i,5000,"this is step " +i));
+            tempList.add(new StepsOld(courseId,i,5000,"this is step " +i));
         }
         return tempList;
     }
@@ -492,7 +489,7 @@ public class DataManager {
     public Course findCourseByImage(Uri image){
         for(Course c: allCourses){
             if(c.getImage().compareTo(image)==0){
-                c.setStepsList(createStepsList(c.getId()));
+                c.setStepsOldList(createStepsList(c.getId()));
                 c.setIngredientList(createIngredientList(c.getId()));
                 return c;
             }
@@ -614,20 +611,20 @@ public class DataManager {
 //            dbHandler.addCategory(categoriesList.get(x));
 //        }
 //
-//        Course[] firstsCourse = {new Course(1,CourseType.FIRST,R.drawable.salad,dbHandler.getImageUri(R.drawable.salad), "Salad",1,categoriesList.get(1).getName(), "Description 1", new ArrayList<Steps>(), new ArrayList<Ingredient>()),
-//                new Course(2,CourseType.FIRST,R.drawable.eggplant,dbHandler.getImageUri(R.drawable.eggplant), "EggPlant",1,categoriesList.get(1).getName(), "Description 2",new ArrayList<Steps>(), new ArrayList<Ingredient>()),
-//                new Course(3,CourseType.FIRST,R.drawable.hasbrownies,dbHandler.getImageUri(R.drawable.hasbrownies), "Hash Brown",1,categoriesList.get(1).getName(), "Description 3",new ArrayList<Steps>(), new ArrayList<Ingredient>())};
+//        Course[] firstsCourse = {new Course(1,CourseType.FIRST,R.drawable.salad,dbHandler.getImageUri(R.drawable.salad), "Salad",1,categoriesList.get(1).getName(), "Description 1", new ArrayList<StepsOld>(), new ArrayList<Ingredient>()),
+//                new Course(2,CourseType.FIRST,R.drawable.eggplant,dbHandler.getImageUri(R.drawable.eggplant), "EggPlant",1,categoriesList.get(1).getName(), "Description 2",new ArrayList<StepsOld>(), new ArrayList<Ingredient>()),
+//                new Course(3,CourseType.FIRST,R.drawable.hasbrownies,dbHandler.getImageUri(R.drawable.hasbrownies), "Hash Brown",1,categoriesList.get(1).getName(), "Description 3",new ArrayList<StepsOld>(), new ArrayList<Ingredient>())};
 //
-////        Course[] firstsCourse = {new Course(1,CourseType.FIRST,R.drawable.salad,dbHandler.getImageUri(R.drawable.salad), "Salad",1,categoriesList.get(1).getName(), "Description 1", new ArrayList<>(stepsList), new ArrayList<>(ingredientList)),
-////                new Course(2,CourseType.FIRST,R.drawable.eggplant,dbHandler.getImageUri(R.drawable.eggplant), "EggPlant",1,categoriesList.get(1).getName(), "Description 2", new ArrayList<>(stepsList), new ArrayList<>(ingredientList)),
-////                new Course(3,CourseType.FIRST,R.drawable.hasbrownies,dbHandler.getImageUri(R.drawable.hasbrownies), "Hash Brown",1,categoriesList.get(1).getName(), "Description 3", new ArrayList<>(stepsList), new ArrayList<>(ingredientList))};
+////        Course[] firstsCourse = {new Course(1,CourseType.FIRST,R.drawable.salad,dbHandler.getImageUri(R.drawable.salad), "Salad",1,categoriesList.get(1).getName(), "Description 1", new ArrayList<>(stepsOldList), new ArrayList<>(ingredientList)),
+////                new Course(2,CourseType.FIRST,R.drawable.eggplant,dbHandler.getImageUri(R.drawable.eggplant), "EggPlant",1,categoriesList.get(1).getName(), "Description 2", new ArrayList<>(stepsOldList), new ArrayList<>(ingredientList)),
+////                new Course(3,CourseType.FIRST,R.drawable.hasbrownies,dbHandler.getImageUri(R.drawable.hasbrownies), "Hash Brown",1,categoriesList.get(1).getName(), "Description 3", new ArrayList<>(stepsOldList), new ArrayList<>(ingredientList))};
 //
 //
 //        for (int i = 0; i < firstsCourse.length ; i++) {
-//                List<Steps> tempList = createStepsList(firstsCourse[i].getId());
-//                firstsCourse[i].setStepsList(new ArrayList<Steps>(tempList));
-//            for (int j = 0; j < firstsCourse[i].getStepsList().size(); j++) {
-//                dbHandler.addStep(firstsCourse[i].getStepsList().get(j));
+//                List<StepsOld> tempList = createStepsList(firstsCourse[i].getId());
+//                firstsCourse[i].setStepsOldList(new ArrayList<StepsOld>(tempList));
+//            for (int j = 0; j < firstsCourse[i].getStepsOldList().size(); j++) {
+//                dbHandler.addStep(firstsCourse[i].getStepsOldList().get(j));
 //            }
 //            List<Ingredient> tempIngList = createIngredientList(firstsCourse[i].getId());
 //            firstsCourse[i].setIngredientList(new ArrayList<Ingredient>(tempIngList));
@@ -639,15 +636,15 @@ public class DataManager {
 //
 //
 //
-//        Course[] mainCourses = { new Course(4,CourseType.MAIN,R.drawable.tomatopasta,dbHandler.getImageUri(R.drawable.tomatopasta), "Tomato Pasta",2,categoriesList.get(2).getName(), "Description 4",new ArrayList<Steps>(), new ArrayList<Ingredient>()),
-//                new Course(5,CourseType.MAIN,R.drawable.omlette,dbHandler.getImageUri(R.drawable.omlette), "Omelet",2,categoriesList.get(2).getName(), "Description 5", new ArrayList<Steps>(), new ArrayList<Ingredient>()),
-//                new Course(6,CourseType.MAIN,R.drawable.fish,dbHandler.getImageUri(R.drawable.fish), "Fish",2,categoriesList.get(2).getName(), "Description 6", new ArrayList<Steps>(), new ArrayList<Ingredient>())};
+//        Course[] mainCourses = { new Course(4,CourseType.MAIN,R.drawable.tomatopasta,dbHandler.getImageUri(R.drawable.tomatopasta), "Tomato Pasta",2,categoriesList.get(2).getName(), "Description 4",new ArrayList<StepsOld>(), new ArrayList<Ingredient>()),
+//                new Course(5,CourseType.MAIN,R.drawable.omlette,dbHandler.getImageUri(R.drawable.omlette), "Omelet",2,categoriesList.get(2).getName(), "Description 5", new ArrayList<StepsOld>(), new ArrayList<Ingredient>()),
+//                new Course(6,CourseType.MAIN,R.drawable.fish,dbHandler.getImageUri(R.drawable.fish), "Fish",2,categoriesList.get(2).getName(), "Description 6", new ArrayList<StepsOld>(), new ArrayList<Ingredient>())};
 //
 //        for (int i = 0; i < mainCourses.length ; i++) {
-//            List<Steps> tempList =  createStepsList(mainCourses[i].getId());
-//            mainCourses[i].setStepsList(new ArrayList<Steps>(tempList));
-//            for (int j = 0; j < mainCourses[i].getStepsList().size(); j++) {
-//                dbHandler.addStep(mainCourses[i].getStepsList().get(j));
+//            List<StepsOld> tempList =  createStepsList(mainCourses[i].getId());
+//            mainCourses[i].setStepsOldList(new ArrayList<StepsOld>(tempList));
+//            for (int j = 0; j < mainCourses[i].getStepsOldList().size(); j++) {
+//                dbHandler.addStep(mainCourses[i].getStepsOldList().get(j));
 //            }
 //            List<Ingredient> tempIngList = createIngredientList(mainCourses[i].getId());
 //            mainCourses[i].setIngredientList(new ArrayList<Ingredient>(tempIngList));
@@ -657,14 +654,14 @@ public class DataManager {
 //            dbHandler.addCourse(mainCourses[i]);
 //        }
 //
-//        Course[] desertCourses = {  new Course(7,CourseType.DESSERT,R.drawable.chocolatecake,dbHandler.getImageUri(R.drawable.chocolatecake), "Chocolate Cake",3,categoriesList.get(3).getName(), "Description 7",new ArrayList<Steps>(), new ArrayList<Ingredient>()),
-//                new Course(8,CourseType.DESSERT,R.drawable.bananaroti,dbHandler.getImageUri(R.drawable.bananaroti), "Banana Roti",3,categoriesList.get(3).getName(), "Description 8", new ArrayList<Steps>(), new ArrayList<Ingredient>())};
+//        Course[] desertCourses = {  new Course(7,CourseType.DESSERT,R.drawable.chocolatecake,dbHandler.getImageUri(R.drawable.chocolatecake), "Chocolate Cake",3,categoriesList.get(3).getName(), "Description 7",new ArrayList<StepsOld>(), new ArrayList<Ingredient>()),
+//                new Course(8,CourseType.DESSERT,R.drawable.bananaroti,dbHandler.getImageUri(R.drawable.bananaroti), "Banana Roti",3,categoriesList.get(3).getName(), "Description 8", new ArrayList<StepsOld>(), new ArrayList<Ingredient>())};
 //
 //        for (int i = 0; i < desertCourses.length ; i++) {
-//            List<Steps> tempList = createStepsList(desertCourses[i].getId());
-//            desertCourses[i].setStepsList(new ArrayList<Steps>(tempList));
-//            for (int j = 0; j < desertCourses[i].getStepsList().size(); j++) {
-//                dbHandler.addStep(desertCourses[i].getStepsList().get(j));
+//            List<StepsOld> tempList = createStepsList(desertCourses[i].getId());
+//            desertCourses[i].setStepsOldList(new ArrayList<StepsOld>(tempList));
+//            for (int j = 0; j < desertCourses[i].getStepsOldList().size(); j++) {
+//                dbHandler.addStep(desertCourses[i].getStepsOldList().get(j));
 //            }
 //            List<Ingredient> tempIngList = createIngredientList(desertCourses[i].getId());
 //            desertCourses[i].setIngredientList(new ArrayList<Ingredient>(tempIngList));

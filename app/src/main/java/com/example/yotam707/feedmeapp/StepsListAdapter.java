@@ -11,7 +11,7 @@ import android.widget.TextView;
  * Created by Adir on 10/12/2016.
  */
 
-public class StepsListAdapter extends ArrayAdapter<Steps> {
+public class StepsListAdapter extends ArrayAdapter<StepsOld> {
 
     private final Context context;
     Course clickedCourse;
@@ -23,7 +23,7 @@ public class StepsListAdapter extends ArrayAdapter<Steps> {
     }
     @Override
     public int getCount() {
-        return  clickedCourse.getStepsList().size();
+        return  clickedCourse.getStepsOldList().size();
     }
 
     @Override
@@ -39,7 +39,7 @@ public class StepsListAdapter extends ArrayAdapter<Steps> {
             holder = (StepsListAdapter.ViewHolder)convertView.getTag();
         }
 
-        Steps step = clickedCourse.getStepsList().get(position);
+        StepsOld step = clickedCourse.getStepsOldList().get(position);
         System.out.println(step.getDescription().toString());
 
         holder.stepNumber.setText(String.valueOf(step.getStepNum()));

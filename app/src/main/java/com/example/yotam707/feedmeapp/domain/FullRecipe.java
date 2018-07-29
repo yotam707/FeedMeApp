@@ -12,6 +12,7 @@ public class FullRecipe {
     private int readyInMinutes;
     private int totalWeight;
     private RecipeLevelType recipeLevel;
+    private boolean isHot;
 
 
 
@@ -83,5 +84,13 @@ public class FullRecipe {
 
     public void setRecipeLevel(RecipeLevelType recipeLevel) {
         this.recipeLevel = recipeLevel;
+    }
+
+    public boolean isHot() {
+        return isHot;
+    }
+
+    public void setHot(boolean hot) {
+        isHot = hot;
     }
 }

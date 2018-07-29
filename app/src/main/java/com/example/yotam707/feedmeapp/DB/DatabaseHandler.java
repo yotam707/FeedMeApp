@@ -10,22 +10,14 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 
 import com.example.yotam707.feedmeapp.Category;
 import com.example.yotam707.feedmeapp.Course;
 import com.example.yotam707.feedmeapp.CourseType;
 import com.example.yotam707.feedmeapp.Ingredient;
-import com.example.yotam707.feedmeapp.Steps;
-import com.example.yotam707.feedmeapp.data.Firestore.FirestoreManager;
-import com.example.yotam707.feedmeapp.domain.Recipe;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.Task;
+import com.example.yotam707.feedmeapp.StepsOld;
 
 import java.io.ByteArrayOutputStream;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -163,7 +155,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 int imageId = getImageId(image);
                 String name = cursor.getString(4);
                 String description = cursor.getString(5);
-                List<Steps> steps = getSteps(courseId);
+                List<StepsOld> steps = getSteps(courseId);
                 List<Ingredient> ingredients = getIngredients(courseId);
                 Course course = new Course(courseId,type,imageId,image,name,categoryId,categoryName,description,new ArrayList<>(steps),ingredients);
 // Adding contact to list
@@ -200,7 +192,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.close(); // Closing database connection
     }
 
-    public void addStep(Steps step) {
+    public void addStep(StepsOld step) {
         System.out.println("Step " + step.getStepNum() + " Add");
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -225,8 +217,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.close(); // Closing database connection
     }
 
-    public List<Steps> getSteps(int id) {
-        List<Steps> steps = new ArrayList<Steps>();
+    public List<StepsOld> getSteps(int id) {
+        List<StepsOld> steps = new ArrayList<StepsOld>();
 
         String selectQuery = "SELECT  * FROM " + TABLE_STEPS + " WHERE " + KEY_COURSE_ID + " = " +
                 id;
@@ -237,7 +229,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         // looping through all rows and adding to list
         if (c.moveToFirst()) {
             do {
-                Steps step = new Steps(c.getInt(c.getColumnIndex(KEY_STEPS_NUM)),
+                StepsOld step = new StepsOld(c.getInt(c.getColumnIndex(KEY_STEPS_NUM)),
                         c.getInt(c.getColumnIndex(KEY_TIME_IN_SECONDS)),c.getString(c.getColumnIndex(KEY_DESCRIPTION)));
                 step.setCourseId(c.getInt(c.getColumnIndex(KEY_COURSE_ID)));
                 steps.add(step);
@@ -312,7 +304,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                     int imageId = getImageId(image);
                     String name = cursor.getString(4);
                     String description = cursor.getString(5);
-                    List<Steps> steps = getSteps(courseId);
+                    List<StepsOld> steps = getSteps(courseId);
                     List<Ingredient> ingredients = getIngredients(courseId);
                     Course course = new Course(courseId, course_type,imageId, image, name, categoryId, categoryName, description, new ArrayList<>(steps), ingredients);
                     typeList.add(course);
@@ -337,7 +329,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 int imageId = getImageId(image);
                 String name = cursor.getString(4);
                 String description = cursor.getString(5);
-                List<Steps> steps = getSteps(courseId);
+                List<StepsOld> steps = getSteps(courseId);
                 List<Ingredient> ingredients = getIngredients(courseId);
                 course = new Course(courseId, course_type, imageId,image, name, categoryId, categoryName, description, new ArrayList<>(steps), ingredients);
             } while (cursor.moveToNext());
@@ -361,7 +353,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                 int imageId = getImageId(image);
                 String name = cursor.getString(4);
                 String description = cursor.getString(5);
-                List<Steps> steps = getSteps(courseId);
+                List<StepsOld> steps = getSteps(courseId);
                 List<Ingredient> ingredients = getIngredients(courseId);
                 course = new Course(courseId, course_type,imageId, image, name, categoryId, categoryName, description, new ArrayList<>(steps), ingredients);
             } while (cursor.moveToNext());

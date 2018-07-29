@@ -19,6 +19,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Source;
 
@@ -195,14 +196,31 @@ public class FirestoreManager {
 
         fireStore.collection(FirestoreEnum.SelectedRecipes.SELECTED_RECIPES)
                 .document(firebaseAuth.getCurrentUser().getUid())
-                .collection(FirestoreEnum.SelectedRecipes.ORDERED_RECIPES).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                .collection(FirestoreEnum.SelectedRecipes.ORDERED_STEPS).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
                     for (DocumentSnapshot document : task.getResult()) {
                         fireStore.collection(FirestoreEnum.SelectedRecipes.SELECTED_RECIPES)
                                 .document(firebaseAuth.getCurrentUser().getUid())
-                                .collection(FirestoreEnum.SelectedRecipes.ORDERED_RECIPES).document(document.getId()).delete();
+                                .collection(FirestoreEnum.SelectedRecipes.ORDERED_STEPS).document(document.getId()).delete();
+                    }
+                } else {
+                    Log.d(TAG, "Error getting documents: ", task.getException());
+                }
+            }
+        }).addOnFailureListener(onFailureListener);
+
+        fireStore.collection(FirestoreEnum.SelectedRecipes.SELECTED_RECIPES)
+                .document(firebaseAuth.getCurrentUser().getUid())
+                .collection(FirestoreEnum.SelectedRecipes.FULL_RECIPES).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (DocumentSnapshot document : task.getResult()) {
+                        fireStore.collection(FirestoreEnum.SelectedRecipes.SELECTED_RECIPES)
+                                .document(firebaseAuth.getCurrentUser().getUid())
+                                .collection(FirestoreEnum.SelectedRecipes.FULL_RECIPES).document(document.getId()).delete();
                     }
                 } else {
                     Log.d(TAG, "Error getting documents: ", task.getException());
@@ -235,9 +253,13 @@ public class FirestoreManager {
         }).addOnFailureListener(onFailureListener);
     }
 
-    public static void getCalculatedCookingData(com.google.firebase.firestore.EventListener<DocumentSnapshot> eventListener){
-        fireStore.collection(FirestoreEnum.SelectedRecipes.SELECTED_RECIPES).document(firebaseAuth.getCurrentUser().getUid())
-                .collection(FirestoreEnum.SelectedRecipes.ORDERED_RECIPES).document(FirestoreEnum.SelectedRecipes.RECIPES).addSnapshotListener(eventListener);
+    public static Query getCalculatedCookingData(){
+        return fireStore.collection(FirestoreEnum.SelectedRecipes.SELECTED_RECIPES).document(firebaseAuth.getCurrentUser().getUid())
+                .collection(FirestoreEnum.SelectedRecipes.ORDERED_STEPS);
+    }
+    public static Query getCalculatedFullRecipesData(){
+        return fireStore.collection(FirestoreEnum.SelectedRecipes.SELECTED_RECIPES).document(firebaseAuth.getCurrentUser().getUid())
+                .collection(FirestoreEnum.SelectedRecipes.FULL_RECIPES);
     }
 
     public static void getEquipment(String equipmentId, OnCompleteListener onCompleteListener, OnFailureListener onFailureListener){

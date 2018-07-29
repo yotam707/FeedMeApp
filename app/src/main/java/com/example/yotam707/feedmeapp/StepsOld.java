@@ -6,7 +6,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by yotam707 on 9/17/2016.
  */
-public class Steps {
+public class StepsOld {
     public int stepNum;
     public  int timeInmSeconds;
     public String description;
@@ -22,7 +22,7 @@ public class Steps {
     private static final int MAX = 100;
 
 
-    public Steps( int stepNum, int timeImSeconds, String description){
+    public StepsOld(int stepNum, int timeImSeconds, String description){
         this.stepNum = stepNum;
         this.timeInmSeconds = timeImSeconds;
         this.description = description;
@@ -37,7 +37,7 @@ public class Steps {
 
     }
 
-    public Steps(int courseId, int stepNum, int timeImSeconds, String description){
+    public StepsOld(int courseId, int stepNum, int timeImSeconds, String description){
         this.courseId =courseId;
         this.stepNum = stepNum;
         this.timeInmSeconds = timeImSeconds;

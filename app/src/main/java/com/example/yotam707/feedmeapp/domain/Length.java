@@ -4,6 +4,9 @@ public class Length {
     private int number;
     private String unit;
     private int maxWaitingTime;
+    public Length(){
+
+    }
     public int getNumber() {
         return number;
     }
