@@ -46,26 +46,7 @@ public class CoursesActivity extends AppCompatActivity {
         spec.setIndicator("Categories");
         host.addTab(spec);
 
-
-
         expListView = (ExpandableListView) findViewById(R.id.courses_list);
-//        final ExpandableListAdapter expListAdapter = new ExpandableListAdapter(
-//                this, DataManager.getInstance(getApplicationContext()).getGroupList(), DataManager.getInstance(getApplicationContext()).getCoursesCollection());
-//        expListView.setAdapter(expListAdapter);
-//
-//        expListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
-//
-//            public boolean onChildClick(ExpandableListView parent, View v,
-//                                        int groupPosition, int childPosition, long id) {
-//                final String selected = (String) expListAdapter.getChild(
-//                        groupPosition, childPosition);
-//                Toast.makeText(getBaseContext(), selected, Toast.LENGTH_LONG)
-//                        .show();
-//
-//                return true;
-//            }
-//        });
-
         listView = (ListView)findViewById(R.id.courses_list_view);
         setListViewAdapter();
 

@@ -23,7 +23,7 @@ public class IngredientsFragmentDialog extends DialogFragment {
     RecipeIngredientsDialogRecyclerView adapter;
     List<Ingredients> extendedIngredients;
 
-    public void setExtendedIngredients(List<Ingredients> extendedIngredients){
+    public void setExtendedIngredients(List<Ingredients> extendedIngredients) {
         this.extendedIngredients = extendedIngredients;
     }
 
@@ -48,7 +48,7 @@ public class IngredientsFragmentDialog extends DialogFragment {
         rv.setNestedScrollingEnabled(true);
         rv.setHasFixedSize(true);
         //ADAPTER
-        adapter=new RecipeIngredientsDialogRecyclerView(extendedIngredients,this.getActivity());
+        adapter = new RecipeIngredientsDialogRecyclerView(extendedIngredients, this.getActivity());
         rv.setAdapter(adapter);
         return rootView;
     }
@@ -63,26 +63,4 @@ public class IngredientsFragmentDialog extends DialogFragment {
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         return dialog;
     }
-
-//    @TargetApi(Build.VERSION_CODES.O)
-//    @RequiresApi(api = Build.VERSION_CODES.O)
-//    @Override
-//    public Dialog onCreateDialog(Bundle savedInstanceState) {
-//        LayoutInflater inflater = this.getLayoutInflater();
-//        View rootView = LayoutInflater.from(getContext()).inflate(R.layout.ingredients_dialog, null);
-//        rv = rootView.findViewById(R.id.ingredient_cooking_rv);
-//        rv.setLayoutManager(new LinearLayoutManager(this.getActivity()));
-//
-//        //ADAPTER
-//        adapter=new RecipeIngredientsDialogRecyclerView(extendedIngredients,this.getActivity());
-//        rv.setAdapter(adapter);
-//
-//        return new AlertDialog.Builder(getActivity()).setTitle(R.string.cooking_step_intro)
-//                .setPositiveButton("Start Cooking", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialogInterface, int i) {
-//                        getDialog().dismiss();
-//                    }
-//                }).setView(rv).create();
-//    }
 }

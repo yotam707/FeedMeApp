@@ -317,20 +317,6 @@ public class FirestoreManager {
         fireStore.collection(FirestoreEnum.Categories.THAI).get().addOnCompleteListener(onCompleteListener).addOnFailureListener(onFailureListener);
     }
 
-//    public static void getAllCategories(OnCompleteListener onCompleteListener, OnFailureListener onFailureListener){
-//        fireStore.collection(FirestoreEnum.Categories.CATEGORIES).document(FirestoreEnum.Categories.CATEGORIES_CUISINE).get().addOnCompleteListener(onCompleteListener).addOnFailureListener(onFailureListener);
-//    }
-//    public static void getAllCategoryRecipes(String category, OnCompleteListener onCompleteListener, OnFailureListener onFailureListener){
-//        fireStore.collection(FirestoreEnum.Categories.CATEGORIES).document(FirestoreEnum.Categories.CATEGORIES_CUISINE).collection(category).get().addOnCompleteListener(onCompleteListener).addOnFailureListener(onFailureListener);
-//    }
-
-//    public static void addCategoryRecipe(String category, List<Recipe> recipes,OnCompleteListener onCompleteListener, OnFailureListener onFailureListener){
-//        for(Recipe recipe: recipes) {
-//            fireStore.collection(category + FirestoreEnum.Categories.CATEGORIES).document().set(recipe).addOnCompleteListener(onCompleteListener).addOnFailureListener(onFailureListener);
-//        }
-//    }
-
-
     public static void getCategoryList(OnCompleteListener onCompleteListener, OnFailureListener onFailureListener) {
         fireStore.collection("CATEGORIES").document("CategoryList").get().addOnCompleteListener(onCompleteListener).addOnFailureListener(onFailureListener);
     }

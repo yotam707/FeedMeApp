@@ -70,23 +70,17 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
      CountDownTimer timer;
      Stack<Step> stepStack = new Stack<>();
      Stack<Step> stepAlertStack = new Stack();
-     //Declare a variable to hold count down timer's paused status
      private boolean isPaused = false;
-     //Declare a variable to hold count down timer's paused status
      private boolean isCanceled = false;
-    HashMap<String, HashMap<Integer,Ingredients>> ingredientsHashMap;
-
+     HashMap<String, HashMap<Integer,Ingredients>> ingredientsHashMap;
      StepIngredientRecyclerViewAdapter ingredientAdapter;
      StepEquipmentRecyclerViewAdapter equipmentAdapter;
-
      LinearLayoutManager layoutManagerIng;
      LinearLayoutManager layoutManagerEquip;
-
      RecyclerView ingredientRecyclerView;
      RecyclerView equipmentRecyclerView;
-    List<Ingredients> ingList;
-    List<Equipment> eqiupList;
-     //Declare a variable to hold CountDownTimer remaining time
+     List<Ingredients> ingList;
+     List<Equipment> eqiupList;
      private long timeRemaining = 0;
      TextView tView;
      Button btnStart;
@@ -104,8 +98,6 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
      public static final String TAG = "";
      ListenerRegistration registration;
      ListenerRegistration registration2;
-     boolean firstStepIng = true;
-     boolean firstStepEquip = true;
 
      @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -158,7 +150,6 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
                             ingList.clear();
                             if(s.getIngredients() != null && s.getIngredients().size() > 0){
                                 ingList = s.getIngredients();
-                                //updateIngrdientList(s.getFullRecipeName());
                                 ingredientAdapter.SetIngrdients(ingList);
                                 ingredientListTitle.setVisibility(View.VISIBLE);
                             }
@@ -503,7 +494,6 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
             @Override
             public void onFinish() {
                 tView.setText("Done");
-
                 //Enable the start button
                 btnStart.setEnabled(true);
                 //Disable the pause, resume and cancel button

@@ -73,9 +73,7 @@ public class TopFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        //db = new DatabaseHandler(thisContext);
         thisContext = inflater.getContext();
-
         View v =  inflater.inflate(R.layout.top_fragment_layout,container,false);
         initTopFragmentRecyclerView(v);
         return v;
@@ -85,7 +83,6 @@ public class TopFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         createCollection();
     }
-
 
     private void createCollection(){
         mainProgressBar.setVisibility(View.VISIBLE);

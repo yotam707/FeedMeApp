@@ -118,13 +118,6 @@ public class EditCoursesActivity extends AppCompatActivity implements Navigation
             alertDialog.show();
         }
         else{
-//            for(Course c : list){
-//                if(c.stepsOldList.size() <= 0){
-//                    c.stepsOldList = new ArrayList<>(DataManager.getInstance().getStepsOldList(c.id));
-//                    c.stepsGenQueue.clear();
-//                    c.getStepsToQueue();
-//                }
-//            }
             FirestoreManager.createCookingRequest(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {

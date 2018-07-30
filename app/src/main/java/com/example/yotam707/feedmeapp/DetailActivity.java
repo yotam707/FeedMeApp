@@ -1,55 +1,42 @@
 package com.example.yotam707.feedmeapp;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.SimpleTarget;
-import com.bumptech.glide.request.transition.Transition;
-import com.example.yotam707.feedmeapp.data.DataManager;
-import com.example.yotam707.feedmeapp.data.Firestore.FirestoreManager;
-import com.example.yotam707.feedmeapp.data.Firestore.FirestoreStorageManager;
-import com.example.yotam707.feedmeapp.domain.FullRecipe;
-import com.example.yotam707.feedmeapp.domain.Recipe;
-import com.example.yotam707.feedmeapp.ui.ui.adapters.IngredientsRecyclerViewAdapter;
-import com.example.yotam707.feedmeapp.ui.ui.adapters.StepsRecyclerViewAdapter;
-import com.example.yotam707.feedmeapp.ui.ui.interfaces.DetailedListItem;
-import com.firebase.ui.auth.AuthUI;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
-
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
-import java.util.ArrayList;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
+import com.example.yotam707.feedmeapp.data.Firestore.FirestoreManager;
+import com.example.yotam707.feedmeapp.data.Firestore.FirestoreStorageManager;
+import com.example.yotam707.feedmeapp.domain.FullRecipe;
+import com.example.yotam707.feedmeapp.domain.Recipe;
+import com.example.yotam707.feedmeapp.ui.ui.adapters.IngredientsRecyclerViewAdapter;
+import com.example.yotam707.feedmeapp.ui.ui.adapters.StepsRecyclerViewAdapter;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class DetailActivity extends AppCompatActivity {
@@ -77,7 +64,6 @@ public class DetailActivity extends AppCompatActivity {
     Course selectedCourse;
     private CollapsingToolbarLayout collapsingToolbar;
     Toolbar toolbar;
-    private Menu collapsedMenu;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -89,22 +75,12 @@ public class DetailActivity extends AppCompatActivity {
         image = findViewById(R.id.ivParallax);
         stepsRecipeRv = findViewById(R.id.steps_rv);
         ingredientsRecipePb = findViewById(R.id.ingredient_progress);
-        //stepsRecipePb = findViewById(R.id.step_progress);
         setSupportActionBar(toolbar);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        collapsingToolbar = (CollapsingToolbarLayout) findViewById(R.id.collapsingToolbarLayout);
-
-
-
-        appBarLayout =(AppBarLayout) findViewById(R.id.appBarLayout);
-//        drawer = (DrawerLayout) findViewById(R.id.drawerLayout);
-        viewPager = (ViewPager)findViewById(R.id.view_pager1);
-        //create default navigation drawer toggle
-//        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
-//                R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-//        drawer.addDrawerListener(toggle);
-//        toggle.syncState();
+        collapsingToolbar =  findViewById(R.id.collapsingToolbarLayout);
+        appBarLayout = findViewById(R.id.appBarLayout);
+        viewPager = findViewById(R.id.view_pager1);
 
         String courseId = getIntent().getStringExtra("courseId");
         CourseType type = CourseType.valueOf(getIntent().getStringExtra("type"));
@@ -148,7 +124,6 @@ public class DetailActivity extends AppCompatActivity {
             }
         });
         ingredientsRecipePb.setVisibility(View.VISIBLE);
-        //stepsRecipePb.setVisibility(View.VISIBLE);
 
         appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             @Override
@@ -191,7 +166,6 @@ public class DetailActivity extends AppCompatActivity {
                             stepsRecipeRv.setNestedScrollingEnabled(true);
                         }
                     }
-                    //stepsRecipePb.setVisibility(View.GONE);
                 }
             }
         }, new OnFailureListener() {
@@ -200,34 +174,6 @@ public class DetailActivity extends AppCompatActivity {
                 Log.d(TAG, "Error fetching full recipe " + e.getMessage());
             }
         });
-        //selectedCourse = DataManager.getInstance().findCourseByImage(Uri.parse(image_path));
-        //selectedCourse = db.getCourseByImage(Uri.parse(image_path));
-
-        Bitmap icon = null;
-       // try {
-            //icon = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(), Uri.parse(image_path));
-           // mHeaderImageView.setImageBitmap(icon);
-
-       // }// catch (IOException e) {
-        //    e.printStackTrace();
-     //   }
-       // mHeaderTitle.setBackgroundColor(ExpandableListAdapter.getDominantColor(icon));
-
-        //ingredientList = (ListView) findViewById(R.id.ingredient_list);
-        //ingredientList.setAdapter(new IngredientsListAdapter(getApplicationContext(),selectedCourse));
-
-        //stepsOldList = (ListView) findViewById(R.id.steps_list);
-       // stepsOldList.setAdapter(new StepsListAdapter(getApplicationContext(),selectedCourse));
-
-        //ListUtils.setDynamicHeight(ingredientList);
-        //ListUtils.setDynamicHeight(stepsOldList);
-
-//        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-//        DataManager.getInstance().createNavigationMenu(navigationView);
-//        assert navigationView != null;
-//        navigationView.setNavigationItemSelectedListener(this);
-
-
 
     }
 
@@ -273,34 +219,6 @@ public class DetailActivity extends AppCompatActivity {
         }
         return dominantColor;
     }
-
-//    @Override
-//    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-//
-//        int id = item.getItemId();
-//
-//        if (id == R.id.top) {
-//            viewPager.setCurrentItem(0);
-//        } else if (id == R.id.cat) {
-//            viewPager.setCurrentItem(1);
-//        } else if (id == R.id.close) {
-//            AuthUI.getInstance().signOut(this);
-//            finish();
-//        }
-//
-//        drawer.closeDrawer(GravityCompat.START);
-//        return true;
-//    }
-//
-//    @Override
-//    public void onBackPressed() {
-//        assert drawer != null;
-//        if (drawer.isDrawerOpen(GravityCompat.START)) {
-//            drawer.closeDrawer(GravityCompat.START);
-//        } else {
-//            super.onBackPressed();
-//        }
-//    }
 
     public Course getSelectedCourse(){
         return selectedCourse;
